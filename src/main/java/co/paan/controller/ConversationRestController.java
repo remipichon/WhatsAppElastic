@@ -1,7 +1,9 @@
 package co.paan.controller;
 
 import co.paan.entities.Post;
+import co.paan.rest.DTO.Author;
 import co.paan.rest.DTO.ParseFileResponseDTO;
+import co.paan.service.impl.ConversationServiceImpl;
 import co.paan.service.impl.ParseFileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -26,6 +28,9 @@ public class ConversationRestController {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
+    @Autowired
+    ConversationServiceImpl conversationService;
+
 
     @RequestMapping("parsefile")
     public ParseFileResponseDTO parseFile(@RequestParam(value = "filename", defaultValue = "sample") String name) {
@@ -44,6 +49,12 @@ public class ConversationRestController {
         elasticsearchTemplate.createIndex(Post.class);
         elasticsearchTemplate.putMapping(Post.class);
         elasticsearchTemplate.refresh(Post.class, true);
+    }
+
+
+    @RequestMapping("getauthors")
+    public ArrayList<Author> getConversationParticipants(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationName){
+        return conversationService.getAuthorsByConversationName(conversationName);
     }
 
 
