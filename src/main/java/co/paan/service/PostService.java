@@ -12,5 +12,4 @@ public interface PostService {
     Post findOne(String id);
     Iterable<Post> findAll();
 
-    Page<Post> findByTagsName(String tagName, PageRequest pageRequest);
 }

@@ -8,13 +8,39 @@ import java.util.List;
 /**
  * Created by hungnguyen on 12/28/14.
  */
-@Document(indexName = "post", type = "post", shards = 1, replicas = 0)
+@Document(indexName = "conversation", type = "posts", shards = 1, replicas = 0)
 public class Post {
     @Id
     private String id;
-    private String title;
+    private String author;
    // @Field(type= FieldType.Nested)
-    private List<Tag> tags;
+    private String content;
+    private String conversationName;
+
+
+    public String getConversationName() {
+        return conversationName;
+    }
+
+    public void setConversationName(String conversationName) {
+        this.conversationName = conversationName;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public String getId() {
         return id;
@@ -24,19 +50,4 @@ public class Post {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
 }

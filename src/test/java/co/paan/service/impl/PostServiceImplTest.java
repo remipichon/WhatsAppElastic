@@ -60,16 +60,14 @@ public class PostServiceImplTest{
 
         Post post = new Post();
         post.setId("1");
-        post.setTitle("Bigining with spring boot application and elasticsearch");
-        post.setTags(Arrays.asList(tag, tag2));
+        post.setContent("Bigining with spring boot application and elasticsearch");
         postService.save(post);
 
         assertThat(post.getId(), notNullValue());
 
         Post post2 = new Post();
         post2.setId("1");
-        post2.setTitle("Bigining with spring boot application");
-        post2.setTags(Arrays.asList(tag));
+        post2.setContent("Bigining with spring boot application");
         postService.save(post);
         assertThat(post2.getId(), notNullValue());
 
@@ -96,25 +94,15 @@ public class PostServiceImplTest{
 
         Post post = new Post();
         post.setId("1");
-        post.setTitle("Bigining with spring boot application and elasticsearch");
-        post.setTags(Arrays.asList(tag, tag2));
+        post.setContent("Bigining with spring boot application and elasticsearch");
         postService.save(post);
 
 
 
         Post post2 = new Post();
         post2.setId("1");
-        post2.setTitle("Bigining with spring boot application");
-        post2.setTags(Arrays.asList(tag));
+        post2.setContent("Bigining with spring boot application");
         postService.save(post);
 
-        Page<Post> posts  = postService.findByTagsName("tech", new PageRequest(0,10));
-        Page<Post> posts2  = postService.findByTagsName("tech", new PageRequest(0,10));
-        Page<Post> posts3  = postService.findByTagsName("maz", new PageRequest(0,10));
-
-
-       assertThat(posts.getTotalElements(), is(1L));
-        assertThat(posts2.getTotalElements(), is(1L));
-        assertThat(posts3.getTotalElements(), is(0L));
     }
 }

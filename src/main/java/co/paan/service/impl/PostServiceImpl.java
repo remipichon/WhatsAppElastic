@@ -32,8 +32,4 @@ public class PostServiceImpl implements PostService{
         return postRepository.findAll();
     }
 
-    @Override
-    public Page<Post> findByTagsName(String tagName, PageRequest pageRequest) {
-        return postRepository.findByTagsName(tagName, pageRequest);
-    }
 }

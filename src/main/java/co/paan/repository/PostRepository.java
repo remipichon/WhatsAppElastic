@@ -10,6 +10,5 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  */
 public interface PostRepository extends ElasticsearchRepository<Post, String>{
 
-    Page<Post> findByTagsName(String name, Pageable pageable);
 
 }
