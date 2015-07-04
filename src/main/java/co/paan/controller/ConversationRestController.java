@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Created by remi on 04/07/15.
@@ -55,6 +56,12 @@ public class ConversationRestController {
     @RequestMapping("getauthors")
     public ArrayList<Author> getConversationParticipants(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationName){
         return conversationService.getAuthorsByConversationName(conversationName);
+    }
+
+
+    @RequestMapping("postCountByAuthors")
+    public Map<String,Long> getpostCountByAthors(@RequestParam(value = "conversationname",defaultValue = "sample") String conversationname){
+        return conversationService.getPostCountByAthors(conversationname);
     }
 
 

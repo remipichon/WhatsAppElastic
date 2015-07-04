@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by remi on 04/07/15.
@@ -34,6 +32,7 @@ public class ConversationServiceImpl implements ConversationService {
         ArrayList<Author> authors = new ArrayList<>();
 
 
+        //TODO utilisaer converastionName !
         Iterable<Post> allPost = postCRUDRepository.findByConversationName(null);
         Iterable<Post> allPost2 = postRepository.findAll();
 
@@ -49,5 +48,20 @@ public class ConversationServiceImpl implements ConversationService {
 
 
         return authors;
+    }
+
+    @Override
+    public Map<String, Long> getPostCountByAthors(String conversationname) {
+        ArrayList<Author> authors = getAuthorsByConversationName(conversationname);
+
+        Map<String, Long> result = new HashMap<>();
+
+
+        for (Author author : authors) {
+            result.put(author.getName(), postCRUDRepository.countByAuthor(author.getName()));
+        }
+
+
+        return result;
     }
 }
