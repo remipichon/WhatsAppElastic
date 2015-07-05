@@ -13,4 +13,6 @@ public interface ConversationService {
     ArrayList<Author> getAuthorsByConversationName(String conversationName);
 
     Map<String, Long> getPostCountByAthors(String conversationname);
+
+    Map<String,Long> getPostLengthByAuthors(String conversationname);
 }

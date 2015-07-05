@@ -65,4 +65,10 @@ public class ConversationRestController {
     }
 
 
+    @RequestMapping("postLengthByAuthors")
+    public Map<String,Long> getPostLengthByAuthors(@RequestParam(value = "conversationname",defaultValue = "sample") String conversationname){
+        return conversationService.getPostLengthByAuthors(conversationname);
+    }
+
+
 }

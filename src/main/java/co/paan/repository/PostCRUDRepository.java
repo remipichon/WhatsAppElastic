@@ -3,6 +3,7 @@ package co.paan.repository;
 import co.paan.entities.Post;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,4 +15,6 @@ public interface PostCRUDRepository extends CrudRepository<Post,String> {
 
 
     List<Post> findByConversationName(String conversationName);
+
+    List<Post> findByConversationNameAndAuthor(String conversationName, String author );
 }

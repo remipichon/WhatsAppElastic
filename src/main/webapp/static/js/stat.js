@@ -88,17 +88,19 @@ function _StatistiqueService(options) {
 
 
         if (this.enumName != null && this.numberMessagePerUser != null &&
-            typeof this.enumName != "string" && typeof this.numberMessagePerUser != "string"
-        //|| self.totalContentPerUser == null
+            typeof this.enumName != "string" && typeof this.numberMessagePerUser != "string" &&
+            typeof this.totalContentPerUser != "string" && typeof this.totalContentPerUser != "string"
         ) {
             this.sortEnumName();
 
             HighchartsService.prototype.drawHighcharts(this);
 
-        } else if (typeof self.enumName == "string"){
-            log.error("an error occurs when getting data "+self.enumName);
-        } else if (typeof self.numberMessagePerUser == "string"){
-            log.error("an error occurs when getting data "+self.numberMessagePerUser);
+        } else if (typeof self.enumName == "string") {
+            log.error("an error occurs when getting data " + self.enumName);
+        } else if (typeof self.numberMessagePerUser == "string") {
+            log.error("an error occurs when getting data " + self.numberMessagePerUser);
+        } else if (typeof self.totalContentPerUser == "string") {
+            log.error("an error occurs when getting data " + self.totalContentPerUser);
         }
 
         //
@@ -107,6 +109,7 @@ function _StatistiqueService(options) {
         //}
 
     };
+    //OK
     this.getEnumName = function () {
         if (this.enumName !== null) return this.enumName;
 
@@ -173,6 +176,7 @@ function _StatistiqueService(options) {
      * @param options
      * @returns {*}
      */
+        //OK
     this.getNumberMessagePerUser = function (options) {
         var options = options || {};
         if (typeof options.toSort === "undefined") toSort = true;
@@ -225,16 +229,45 @@ function _StatistiqueService(options) {
 
     this.getTotalContentPerUser = function () {
         if (this.totalContentPerUser !== null) return this.totalContentPerUser;
-        if (this.fetchedRows !== null) {
-            var fetchedRows = this.fetchedRows;
-        } else {
-            var fetchedRows = null;
-        }
+        //if (this.fetchedRows !== null) {
+        //    var fetchedRows = this.fetchedRows;
+        //} else {
+        //    var fetchedRows = null;
+        //}
         var betweenDate = this.betweenDate;
         var ref = this.ref;
         var betweenHours = this.betweenHours;
 
-        var enumName = this.getEnumName();
+        //var enumName = this.getEnumName();
+
+        var self = this;
+        $.ajax({
+            url: '/api/conversation/postLengthByAuthors', //TODO send conversation ref
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var occurences = data;
+
+                if (toSort === true)
+                    occurences = self.sortObject(occurences);
+                //if (refetch == false) {
+                //we only update this if we are not explicitely recalculating it via refetch
+                //self.numberMessagePerUser = occurences;
+                //}
+
+                self.totalContentPerUser = occurences;
+                self.statAvailable();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                self.totalContentPerUser = errorThrown;
+            }
+        });
+
+
+        return null;
+
+
         var occurences = {};
         _.each(enumName, function (userName) {
             var tot = 0;
@@ -450,7 +483,6 @@ function _StatistiqueService(options) {
         this.totalContentPerUser = totalContentPerUser;
         this.statNumberMessagePerUser = statNumberMessagePerUser;
     };
-
 
 
     this.setAll = function (callback) {

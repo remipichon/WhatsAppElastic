@@ -64,4 +64,26 @@ public class ConversationServiceImpl implements ConversationService {
 
         return result;
     }
+
+    @Override
+    public Map<String, Long> getPostLengthByAuthors(String conversationname) {
+        ArrayList<Author> authors = getAuthorsByConversationName(conversationname);
+
+        Map<String, Long> result = new HashMap<>();
+
+
+        for (Author author : authors) {
+            Long lengthTotal = new Long(0);
+            List<Post> byConversationNameAndAuthor = postCRUDRepository.findByConversationNameAndAuthor(null,author.getName()); //TODO use conversationName
+            for (Post post : byConversationNameAndAuthor) {
+                lengthTotal += post.getContent().length();
+            }
+
+            result.put(author.getName(), lengthTotal);
+        }
+
+
+        return result;
+    }
+
 }
