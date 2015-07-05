@@ -1,8 +1,8 @@
 //Data = new Meteor.Collection("data");
 //Statistique = new Meteor.Collection("statistique");
 statistique = null; //will store the StatistiqueService currently drawn
-DataSubscription = null;
-StatistiqueSubscription = null;
+//DataSubscription = null;
+//StatistiqueSubscription = null;
 
 
 Object.size = function (obj) {
@@ -78,24 +78,61 @@ function _StatistiqueService(options) {
         return temp;
     }
 
+
+    /**
+     * callback called each time a new data is available
+     */
+    this.statAvailable = function () {
+
+        //TODO ce code devra aller dans Highchart qui se débrouile pour tracer ce qu'il peut avec ce qu'il a
+
+
+        if (this.enumName != null && this.numberMessagePerUser != null &&
+            typeof this.enumName != "string" && typeof this.numberMessagePerUser != "string"
+        //|| self.totalContentPerUser == null
+        ) {
+            this.sortEnumName();
+
+            HighchartsService.prototype.drawHighcharts(this);
+
+        } else if (typeof self.enumName == "string"){
+            log.error("an error occurs when getting data "+self.enumName);
+        } else if (typeof self.numberMessagePerUser == "string"){
+            log.error("an error occurs when getting data "+self.numberMessagePerUser);
+        }
+
+        //
+        //if (typeof callback === "function") {
+        //    callback.call(self, self);
+        //}
+
+    };
     this.getEnumName = function () {
         if (this.enumName !== null) return this.enumName;
 
-        var names = [];
-        if (this.fetchedRows !== null) {
-            _.each(this.fetchedRows, function (value, key) {
+        var self = this;
+        $.ajax({
+            url: '/api/conversation/getauthors',
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                self.enumName = [];
+                _.each(data, function (key, value) {
+                    self.enumName.push(key.name);
+                });
+                self.statAvailable();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                self.enumName = errorThrown;
+            }
 
-                if (value.length > 1)
-                    names.push(key);
+        });
 
-
-            });
-            this.enumName = names;
-            return names;
-        }
-
+        return null;
     };
 
+    //OK
     this.sortEnumName = function () {
         var names = [];
         _.each(this.numberMessagePerUser, function (value, name) {
@@ -105,6 +142,7 @@ function _StatistiqueService(options) {
         return names;
     };
 
+    //deprecated
     this.fetchesRows = function () {
         if (this.fetchedRows !== null) return this.fetchedRows;
         var occurences = {};
@@ -144,46 +182,45 @@ function _StatistiqueService(options) {
         if (this.numberMessagePerUser !== null && refetch == false) return this.numberMessagePerUser;
 
 
-        if (this.fetchedRows !== null && refetch === false) {
-            log.warn("get nb msg per user use fetchedRows");
-            var fetchedRows = this.fetchedRows;
-        } else {
-            log.warn("get use db")
-            var fetchedRows = null;
-        }
+        //if (this.fetchedRows !== null && refetch === false) {
+        //    log.warn("get nb msg per user use fetchedRows");
+        //    var fetchedRows = this.fetchedRows;
+        //} else {
+        //    log.warn("get use db")
+        //    var fetchedRows = null;
+        //}
         var betweenDate = this.betweenDate;
         var ref = this.ref;
         var betweenHours = this.betweenHours;
 
-        var enumName = this.getEnumName();
-        var occurences = {};
-        //var self = this;
-        for (var i = 0; i < enumName.length; i++) {
-            //_.each(enumName, function(userName) {
-            userName = enumName[i];
+        //var enumName = this.getEnumName();
 
-            if (fetchedRows !== null) {
-                occurences[userName] = fetchedRows[userName].length;
-            } else {
-                occurences[userName] = Data.find({
-                    $and: [{
-                        userName: userName
-                    }, {
-                        reference: ref
-                    },
-                        //betweenDate,
-                        betweenHours
-                    ]
-                }).fetch().length;
+        var self = this;
+        $.ajax({
+            url: '/api/conversation/postCountByAuthors', //TODO send conversation ref
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var occurences = data;
+
+                if (toSort === true)
+                    occurences = self.sortObject(occurences);
+                //if (refetch == false) {
+                //we only update this if we are not explicitely recalculating it via refetch
+                //self.numberMessagePerUser = occurences;
+                //}
+
+                self.numberMessagePerUser = occurences;
+                self.statAvailable();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                self.numberMessagePerUser = errorThrown;
             }
-        }
-        if (toSort === true)
-            occurences = this.sortObject(occurences);
-        if (refetch == false) {
-            //we only update this if we are not explicitely recalculating it via refetch
-            this.numberMessagePerUser = occurences;
-        }
-        return occurences;
+        });
+
+
+        return null;
     };
 
     this.getTotalContentPerUser = function () {
@@ -415,88 +452,25 @@ function _StatistiqueService(options) {
     };
 
 
-    /**
-     * ajax call to REST backend (just a stub)
-     */
-    this.getAll = function (callback) {
-        var self = this;
-
-        //we only care about getting data for barChart
-
-        //enumName
-        $.ajax({
-            url: '/api/conversation/getauthors',
-            type: 'GET',
-            async: true,
-            dataType: "json",
-            success: function (data) {
-                self.enumName = [];
-                _.each(data, function (key, value) {
-                    self.enumName.push(key.name);
-                });
-                draw();
-            }
-        });
-
-        //numberMessagePerUser
-        $.ajax({
-            url: '/api/conversation/postCountByAuthors',
-            type: 'GET',
-            async: true,
-            dataType: "json",
-            success: function (data) {
-                self.numberMessagePerUser = data;
-                draw();
-            }
-        });
-
-        //totalContentPerUser
-        //$.ajax({
-        //    url: '/?',
-        //    type: 'GET',
-        //    async: true,
-        //    dataType: "json",
-        //    success: function (data) {
-        //        this.totalContentPerUser = data;
-        //        draw();
-        //    }
-        //});
-
-
-        function draw() {
-            if (self.enumName == null ||
-                self.numberMessagePerUser == null
-            //|| self.totalContentPerUser == null
-            ) return;
-
-            if (typeof callback === "function") {
-                callback.call(self,self);
-            }
-
-        }
-
-
-    }
-
 
     this.setAll = function (callback) {
-        this.read();
+        //this.read();
         log.info("StatistiqueService.setAll : starting ...")
-        this.fetchesRows();
-        this.getNumberTotalMessage();
+        //this.fetchesRows();
+        //this.getNumberTotalMessage();
         this.getEnumName();
         this.getNumberMessagePerUser();
-        this.sortEnumName();
-        this.calculAll();
-        if (confirm("do you want to calcul the timelime ?\nIt's fucking looong"))
-            this.getMessagePerUserTimeline();
+        //this.sortEnumName();
+        //this.calculAll();
+        //if (confirm("do you want to calcul the timelime ?\nIt's fucking looong"))
+        //    this.getMessagePerUserTimeline();
         log.info("StatistiqueService.setAll : end");
 
         //TODO repair this !
         //we only want to store statistique based on the whole data
         //if (this.betweenDate['date.ISO'].$gte == DatetimePicker.prototype.infinityDate()['date.ISO'].$gte &&
         //	this.betweenHours['date.ISO'].$gte == DatetimePicker.prototype.infinityHours()['date.ISO'].$gte) {
-        this.update();
+        //this.update();
         //}
 
         if (typeof callback === "function") {
@@ -524,6 +498,7 @@ function _StatistiqueService(options) {
         return attr;
     };
 
+    //deprecated
     this.create = function () {
         if (Conversation.findOne({
                 name: this.ref
@@ -629,6 +604,7 @@ function _StatistiqueService(options) {
      * charge les statistques déjà calculée
      * @param  {Meteor.collection} collection collection which contains statistques (null if never calculated)
      */
+        //deprecated
     this.read = function (callback) {
         if (Conversation.findOne().hasStat === false) {
             log.warn("StatistiqueService.read : A statistique is not already set : you can't read a not calculated statistique");
@@ -659,6 +635,7 @@ function _StatistiqueService(options) {
      * @param  {Function} callback [description]
      * @return {[type]}            [description]
      */
+        //deprecated
     this.update = function (callback) {
         if (Conversation.findOne({
                 name: this.ref
@@ -707,7 +684,8 @@ StatistiqueService = function (options) {
     } else {
         var calculAll = (typeof options.calculAll !== "undefined") ? options.calculAll : true;
     }
-    var ref = options.ref || Conversation.findOne().name || null;
+    //var ref = options.ref || Conversation.findOne().name || null;
+    var ref = options.ref || null;
 
     var statistique = new _StatistiqueService({
         calculAll: false, //false pour laisser le temps à l'aop d'etre init

@@ -15,98 +15,186 @@
 </head>
 
 <body ng-app="hello">
-<div class="container">
-    <h1>Greeting KKK</h1>
+<!--<div class="container">-->
+    <!--<h1>Greeting KKK</h1>-->
 
-    <div ng-controller="home" ng-cloak class="ng-cloak">
-        <p>The ID is {{greeting.id}}</p>
+    <!--<div ng-controller="home" ng-cloak class="ng-cloak">-->
+        <!--<p>The ID is {{greeting.id}}</p>-->
 
-        <p>The content is {{greeting.content}}</p>
-    </div>
+        <!--<p>The content is {{greeting.content}}</p>-->
+    <!--</div>-->
+<!--</div>-->
 
+<div name="modalFile">
+    <div id="modal-file" class="modal fade container" data-keyboard="false" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Choose a conversation</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="form-conversation-filename">
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="panel panel-default">  <!-- panel : load existing -->
+                                <div class="panel-heading"><label>Select an existing one</label></div>
+                                <div class="panel-body">
+                                    <div class="form-group has-feedback">
+                                        <label class="control-label" for="conversation-name">Type the name of your
+                                            conversation</label>
+                                        <input type="text" class="form-control" id="conversation-name"
+                                               placeHolder="Enter an existing conversation name">
+                                        <input type="checkbox" name="getDataSub" value="false" id="getDataSub"> get data
+                                        sub
+                                        <span class="sucess-icon glyphicon glyphicon-ok form-control-feedback"></span>
+                                        <span class="error-icon glyphicon glyphicon-ban-circle form-control-feedback"></span>
 
-    <div name="containerCharts">
-        <div id="gears-area" class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-12 col-xs-12">
-                    <div class="row">
-                        <div id="filename" class="text-center col-md-12"
-                             data-toggle="modal" data-target="#modal-file">
-                            <h3>{{getCurrentConversationName}}</h3></div>
+                                        <div class="loading-icon small spinner-progress form-control-feedback">
+                                            <div>Loading…</div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end panel : load existing-->
+                            <div class="panel panel-default">  <!-- panel : create a new -->
+                                <div class="panel-heading"><label>Or upload one of yours</label></div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="sr-only">Or upload one of yours </label>
+                                        <input type="file" id="fileToUpload">
+                                    </div>
+                                    <div class="form-group has-feedback">
+                                        <label class="control-label" for="conversation-name">And choose a conversation
+                                            name</label>
+                                        <input type="text" class="form-control" id="new-conversation-name"
+                                               placeHolder="Enter a non existing conversation name">
+                                        <span class="sucess-icon glyphicon glyphicon-ok form-control-feedback"></span>
+                                        <span class="error-icon glyphicon glyphicon-ban-circle form-control-feedback"></span>
+
+                                        <div class="loading-icon small spinner-progress form-control-feedback">
+                                            <div>Loading…</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end panel : create a new-->
+                            <div id="panel-parse-file-progress-bar" class="panel panel-default" style="display:none;">
+                                <!--  panel : progress bar -->
+                                <div class="panel-heading"><label>Reading your file...</label></div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="progress">
+                                            <div id="parse-file-progress-bar"
+                                                 class="progress-bar progress-bar-striped active" role="progressbar"
+                                                 aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"
+                                                 style="width: 0%">
+                                                <span class="sr-only_"><span>0</span>% Complete</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end panel : progress bar-->
+                        </div>
+                        <!-- end col -->
                     </div>
                 </div>
-                <div class="clearfix visible-xs-block visible-sm-block"></div>
-                <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6 col-xs-12 text-center-md  text-right-sm  text-right-xs">
-                            <label> From : </label>
-                            <input class="text-center date" id="date_timepicker_start" type="text">
-                        </div>
-                        <div class="col-md-3 col-sm-6 col-xs-12  text-center-md text-left-sm text-right-xs">
-                            <label> To : </label>
-                            <input class="text-center date" id="date_timepicker_end" type="text">
-                        </div>
-                        <div class="col-md-3 col-xs-6 text-center-md text-right-sm text-right-xs">
-                            <label> beetween </label>
-                            <input class="text-center time" id="hour_timepicker_start" type="text">
-                        </div>
-                        <div class="col-md-3 col-xs-6 text-center-md text-left-sm text-left-xs">
-                            <label> and </label>
-                            <input class="text-center time" id="hour_timepicker_end" type="text">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <button id="draw-button" type="button" class="col-md-10 col-xs-10 btn btn-default">Draw charts
-                        </button>
-                        <div class="col-md-2 col-xs-2">
-                            <input type="checkbox" name="drawTimeline" id="draw_timeline"> Draw timeline (heavy !)
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
-
-
-        <div id="charts" class="container-fluid">
-            <div class="row">
-                <div id="user-bar-chart" class="col-md-12"></div>
-            </div>
-            <div class="row">
-                <div id="user-content-pie-chart" class="col-md-6"></div>
-                <div id="user-message-pie-chart" class="col-md-6"></div>
-            </div>
-            <div class="row">
-                <div id="user-bar-chart-timeline"></div>
+            <div class="modal-footer">
+                <button type="button" id="modal-file-close" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="modal-file-continue" class="btn btn-primary">Continue</button>
             </div>
         </div>
     </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular-route.min.js"></script>
-
-    <script src="js/underscore-min.js"></script>
-    <script src="js/jquery.js"></script>
-    <script src="js/jquery-ui.js"></script>
-    <script src="js/jquery.datetimepicker.js"></script>
-    <script src="js/aop.js"></script>
-
-    <script src="js/highcharts.js"></script>
-    <script src="js/conversation.js"></script>
-    <script src="js/datetimepicker.js"></script>
-    <script src="js/hello.js"></script>
-    <script src="js/highcharts.src.js"></script>
-    <script src="js/modalControler.js"></script>
-    <script src="js/stat.js"></script>
-    <script src="js/test.js"></script>
-
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </div>
+
+
+<div name="containerCharts">
+    <div id="gears-area" class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-12 col-xs-12">
+                <div class="row">
+                    <div id="filename" class="text-center col-md-12"
+                         data-toggle="modal" data-target="#modal-file">
+                        <h3>ConversationName : {{getCurrentConversationName}}</h3></div>
+                </div>
+            </div>
+            <div class="clearfix visible-xs-block visible-sm-block"></div>
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 col-xs-12 text-center-md  text-right-sm  text-right-xs">
+                        <label> From : </label>
+                        <input class="text-center date" id="date_timepicker_start" type="text">
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12  text-center-md text-left-sm text-right-xs">
+                        <label> To : </label>
+                        <input class="text-center date" id="date_timepicker_end" type="text">
+                    </div>
+                    <div class="col-md-3 col-xs-6 text-center-md text-right-sm text-right-xs">
+                        <label> beetween </label>
+                        <input class="text-center time" id="hour_timepicker_start" type="text">
+                    </div>
+                    <div class="col-md-3 col-xs-6 text-center-md text-left-sm text-left-xs">
+                        <label> and </label>
+                        <input class="text-center time" id="hour_timepicker_end" type="text">
+                    </div>
+                </div>
+                <div class="row">
+                    <button id="draw-button" type="button" class="col-md-10 col-xs-10 btn btn-default">Draw charts
+                    </button>
+                    <div class="col-md-2 col-xs-2">
+                        <input type="checkbox" name="drawTimeline" id="draw_timeline"> Draw timeline (heavy !)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="charts" class="container-fluid">
+        <div class="row">
+            <div id="user-bar-chart" class="col-md-12"></div>
+        </div>
+        <div class="row">
+            <div id="user-content-pie-chart" class="col-md-6"></div>
+            <div id="user-message-pie-chart" class="col-md-6"></div>
+        </div>
+        <div class="row">
+            <div id="user-bar-chart-timeline"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular-route.min.js"></script>
+
+<script src="js/lib/underscore-min.js"></script>
+<script src="js/lib/jquery.js"></script>
+<script src="js/lib/jquery-ui.js"></script>
+<script src="js/lib/jquery.datetimepicker.js"></script>
+<script src="js/lib/aop.js"></script>
+<script src="js/lib/highcharts.src.js"></script>
+<script src="js/lib/loglevel.js"></script>
+
+<script src="js/highcharts.js"></script>
+<script src="js/conversation.js"></script>
+<script src="js/datetimepicker.js"></script>
+<script src="js/hello.js"></script>
+<script src="js/modalControler.js"></script>
+<script src="js/stat.js"></script>
+<script src="js/test.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 </body>
 </html>

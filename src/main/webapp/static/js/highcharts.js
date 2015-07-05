@@ -51,7 +51,7 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
         series: [{
             name: 'Messages sent',
             color: 'rgba(124, 181, 236,0.7)',
-            data: _.values(numberMessagePerUser), //TODO appel ajax
+            data: _.values(numberMessagePerUser),
             pointPadding: 0.2,
             pointPlacement: -0.2,
             yAxis: 0
@@ -67,7 +67,7 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
             //TODO
         //    name: 'Content typed',
         //    color: 'rgba(144, 237, 125,0.7);',
-        //    data: _.values(totalContentPerUser),  //TODO appel ajax
+        //    data: _.values(totalContentPerUser),
         //    pointPadding: 0.4,
         //    pointPlacement: -0.2,
         //    yAxis: 1
@@ -228,11 +228,12 @@ HighchartsService.prototype.drawHighcharts = function(statistique) {
 
 HighchartsService.prototype.initDrawHighcharts = function() {
     delete statistique;
-    statistique =  new _StatistiqueService({
-        ref: "sample" //TODO
+    statistique =  new StatistiqueService({
+        ref: "sample", //TODO
+        calculAll: true //to get and draw //TODO rename attribute to offer : getAll, getAll+drawAll
     });
 
-    //TODO
+    //TODO DateTimePicker and conversationName
     //statistique = new StatistiqueService({
     //    calculAll:false,
     //    ref: Conversation.findOne().name
@@ -270,7 +271,7 @@ HighchartsService.prototype.initDrawHighcharts = function() {
     //HighchartsService.prototype.drawHighcharts(statistique);
 
 
-    statistique.getAll(HighchartsService.prototype.drawHighcharts);
+    //statistique.getAll(HighchartsService.prototype.drawHighcharts);
 
 
 }

@@ -9,14 +9,15 @@ angular.module('hello', [])
     });
 
 
+
 $(document).ready(function() {
-    //log.setLevel("trace");
-    ////parce que les trace prennent trop de place dans la console
-    //log.trace = function() {
-    //    var args = Array.prototype.slice.call(arguments);
-    //    args.unshift("TRACE : ");
-    //    log.info.apply(this, args);
-    //}
+    log.setLevel("trace");
+    //parce que les trace prennent trop de place dans la console
+    log.trace = function() {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift("TRACE : ");
+        log.info.apply(this, args);
+    }
     DatetimePickerService.prototype.initDatePicker();
     DatetimePickerService.prototype.initTimePicker();
     $("#draw-button").on("click", HighchartsService.prototype.initDrawHighcharts);
@@ -29,4 +30,3 @@ $(document).ready(function() {
     $("#filename").css("cursor","pointer");
 });
 
-log = console;
