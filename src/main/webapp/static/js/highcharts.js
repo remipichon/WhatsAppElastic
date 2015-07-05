@@ -6,7 +6,7 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
     var enumName = statistique.getEnumName();
     var numberMessagePerUser = statistique.getNumberMessagePerUser();
     // var numberCharacterPerMessagePerUser = statistique.getNumberCharacterPerMessagePerUser();
-    var totalContentPerUser = statistique.getTotalContentPerUser();
+    //var totalContentPerUser = statistique.getTotalContentPerUser(); //TODO
 
     var $chart = $('#user-bar-chart');
     if (typeof $chart.highcharts() !== "undefined") $chart.highcharts().destroy();
@@ -33,7 +33,7 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
         }, {
             title: {
                 text: 'Content (nb caracters)'
-            },
+            }
         }],
         legend: {
             shadow: false
@@ -51,11 +51,12 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
         series: [{
             name: 'Messages sent',
             color: 'rgba(124, 181, 236,0.7)',
-            data: _.values(numberMessagePerUser),
+            data: _.values(numberMessagePerUser), //TODO appel ajax
             pointPadding: 0.2,
             pointPlacement: -0.2,
             yAxis: 0
-        }, {
+        },
+            //{
            /* name: 'Content per message typed',
             color: 'rgba(209, 50, 144, 0.7)',
             data: _.values(numberCharacterPerMessagePerUser),
@@ -63,13 +64,15 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
             pointPlacement: -0.2,
             yAxis: 1
         }, {*/
-            name: 'Content typed',
-            color: 'rgba(144, 237, 125,0.7);',
-            data: _.values(totalContentPerUser),
-            pointPadding: 0.4,
-            pointPlacement: -0.2,
-            yAxis: 1
-        }]
+            //TODO
+        //    name: 'Content typed',
+        //    color: 'rgba(144, 237, 125,0.7);',
+        //    data: _.values(totalContentPerUser),  //TODO appel ajax
+        //    pointPadding: 0.4,
+        //    pointPlacement: -0.2,
+        //    yAxis: 1
+        //}
+        ]
     });
 }
 
@@ -217,49 +220,59 @@ HighchartsService.prototype.drawHighcharts = function(statistique) {
     }
     var highchartsService = new HighchartsService();
     highchartsService.drawUserBarChart(statistique);
-    highchartsService.drawMessageUserPieChart(statistique);
-    highchartsService.drawContentUserPieChart(statistique);
-   highchartsService.drawMessageBarChartTimeline(statistique);
+   // highchartsService.drawMessageUserPieChart(statistique);
+   // highchartsService.drawContentUserPieChart(statistique);
+   //highchartsService.drawMessageBarChartTimeline(statistique);
 }
 
 
 HighchartsService.prototype.initDrawHighcharts = function() {
     delete statistique;
-
-    statistique = new StatistiqueService({
-        calculAll:false,
-        ref:Conversation.findOne().name
+    statistique =  new _StatistiqueService({
+        ref: "sample" //TODO
     });
 
-    var endDate = datetimepicker.findOne({
-        type: "endDate"
-    }).date;
-    var startDate = datetimepicker.findOne({
-        type: "startDate"
-    }).date;
-    statistique.betweenDate = {
-        "date.ISO": {
-            $gte: startDate,
-            $lt: endDate
-        }
-    };
+    //TODO
+    //statistique = new StatistiqueService({
+    //    calculAll:false,
+    //    ref: Conversation.findOne().name
+    //});
+    //
+    //var endDate = datetimepicker.findOne({
+    //    type: "endDate"
+    //}).date;
+    //var startDate = datetimepicker.findOne({
+    //    type: "startDate"
+    //}).date;
+    //statistique.betweenDate = {
+    //    "date.ISO": {
+    //        $gte: startDate,
+    //        $lt: endDate
+    //    }
+    //};
+    //
+    //var endHours = datetimepicker.findOne({
+    //    type: "endHours"
+    //}).hours;
+    //var startHours = datetimepicker.findOne({
+    //    type: "startHours"
+    //}).hours;
+    //statistique.betweenHours = {
+    //    "hours.ISO": {
+    //        $gte: startHours,
+    //        $lt: endHours
+    //    }
+    //};
 
-    var endHours = datetimepicker.findOne({
-        type: "endHours"
-    }).hours;
-    var startHours = datetimepicker.findOne({
-        type: "startHours"
-    }).hours;
-    statistique.betweenHours = {
-        "hours.ISO": {
-            $gte: startHours,
-            $lt: endHours
-        }
-    };
+    //TODO
+    //statistique.setAll();
+    //log.info("HighchartsService.initDrawHighcharts statistique", statistique);
+    //HighchartsService.prototype.drawHighcharts(statistique);
 
-    statistique.setAll();
-    log.info("HighchartsService.initDrawHighcharts statistique", statistique);
-    HighchartsService.prototype.drawHighcharts(statistique);
+
+    statistique.getAll(HighchartsService.prototype.drawHighcharts);
+
+
 }
 
 // must be after adding methods to prototype

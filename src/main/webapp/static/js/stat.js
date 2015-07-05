@@ -20,16 +20,17 @@ Object.size = function (obj) {
  * @return {[type]}         [description]
  */
 function _StatistiqueService(options) {
-    if (typeof options.calculAll !== "boolean") calculAll = false;
-    else calculAll = options.calculAll;
-    this.ref = options.ref || ((typeof Conversation.findOne({}) === "undefined") ? null : Conversation.findOne({}).name);
-    if (this.ref === null || this.ref === "") {
-        log.error("Statistique : options.ref is mandatory");
-        return;
-    }
-    log.info("Statistique with ", this.ref);
-    this.betweenDate = DatetimePicker.prototype.infinityDate();
-    this.betweenHours = DatetimePicker.prototype.infinityHours();
+    //TODO
+    //if (typeof options.calculAll !== "boolean") calculAll = false;
+    //else calculAll = options.calculAll;
+    //this.ref = options.ref || ((typeof Conversation.findOne({}) === "undefined") ? null : Conversation.findOne({}).name);
+    //if (this.ref === null || this.ref === "") {
+    //    log.error("Statistique : options.ref is mandatory");
+    //    return;
+    //}
+    //log.info("Statistique with ", this.ref);
+    //this.betweenDate = DatetimePicker.prototype.infinityDate();
+    //this.betweenHours = DatetimePicker.prototype.infinityHours();
 
     this.enumName = null;
     this.numberMessagePerUser = null;
@@ -84,7 +85,7 @@ function _StatistiqueService(options) {
         if (this.fetchedRows !== null) {
             _.each(this.fetchedRows, function (value, key) {
 
-                if(value.length > 1)
+                if (value.length > 1)
                     names.push(key);
 
 
@@ -178,7 +179,7 @@ function _StatistiqueService(options) {
         }
         if (toSort === true)
             occurences = this.sortObject(occurences);
-        if(refetch == false){
+        if (refetch == false) {
             //we only update this if we are not explicitely recalculating it via refetch
             this.numberMessagePerUser = occurences;
         }
@@ -320,10 +321,9 @@ function _StatistiqueService(options) {
             //});
 
 
-
-            for(var i = 0;i<this.enumName.length; i++){
-            //_.each(this.enumName, function (name) {
-                name =  this.enumName[i];
+            for (var i = 0; i < this.enumName.length; i++) {
+                //_.each(this.enumName, function (name) {
+                name = this.enumName[i];
                 if (typeof messagePerUserTimeline[name] !== "object") {
                     messagePerUserTimeline[name] = [];
                 }
@@ -344,8 +344,8 @@ function _StatistiqueService(options) {
                 total += parseInt(nbMessage || 0);
             }
             messagePerUserTimeline.total.push(total);
-            log.debug("getMessagePerUserTimeline ", hours["hours.ISO"].$gte.getHours()+"h to "+hours["hours.ISO"].$lt.getHours()+1+"h", "total", total);
-            if(hours["hours.ISO"].$gte.getHours() >= 23){
+            log.debug("getMessagePerUserTimeline ", hours["hours.ISO"].$gte.getHours() + "h to " + hours["hours.ISO"].$lt.getHours() + 1 + "h", "total", total);
+            if (hours["hours.ISO"].$gte.getHours() >= 23) {
                 break;
             }
             hours = DatetimePicker.prototype.nextHour(hours);
@@ -370,9 +370,9 @@ function _StatistiqueService(options) {
      * @return {[type]} [description]
      */
     this.calculAll = function () {
-        if(this.numberCharacterPerMessagePerUser !== null &&
-        this.totalContentPerUser !== null &&
-        this.statNumberMessagePerUser  !== null) return
+        if (this.numberCharacterPerMessagePerUser !== null &&
+            this.totalContentPerUser !== null &&
+            this.statNumberMessagePerUser !== null) return
 
         var betweenDate = this.betweenDate;
         var ref = this.ref;
@@ -415,6 +415,70 @@ function _StatistiqueService(options) {
     };
 
 
+    /**
+     * ajax call to REST backend (just a stub)
+     */
+    this.getAll = function (callback) {
+        var self = this;
+
+        //we only care about getting data for barChart
+
+        //enumName
+        $.ajax({
+            url: '/api/conversation/getauthors',
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                self.enumName = [];
+                _.each(data, function (key, value) {
+                    self.enumName.push(key.name);
+                });
+                draw();
+            }
+        });
+
+        //numberMessagePerUser
+        $.ajax({
+            url: '/api/conversation/postCountByAuthors',
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                self.numberMessagePerUser = data;
+                draw();
+            }
+        });
+
+        //totalContentPerUser
+        //$.ajax({
+        //    url: '/?',
+        //    type: 'GET',
+        //    async: true,
+        //    dataType: "json",
+        //    success: function (data) {
+        //        this.totalContentPerUser = data;
+        //        draw();
+        //    }
+        //});
+
+
+        function draw() {
+            if (self.enumName == null ||
+                self.numberMessagePerUser == null
+            //|| self.totalContentPerUser == null
+            ) return;
+
+            if (typeof callback === "function") {
+                callback.call(self,self);
+            }
+
+        }
+
+
+    }
+
+
     this.setAll = function (callback) {
         this.read();
         log.info("StatistiqueService.setAll : starting ...")
@@ -424,7 +488,7 @@ function _StatistiqueService(options) {
         this.getNumberMessagePerUser();
         this.sortEnumName();
         this.calculAll();
-        if(confirm("do you want to calcul the timelime ?\nIt's fucking looong"))
+        if (confirm("do you want to calcul the timelime ?\nIt's fucking looong"))
             this.getMessagePerUserTimeline();
         log.info("StatistiqueService.setAll : end");
 
@@ -438,7 +502,6 @@ function _StatistiqueService(options) {
         if (typeof callback === "function") {
             callback.call(this);
         }
-
 
 
     }
@@ -490,31 +553,31 @@ function _StatistiqueService(options) {
      * OR
      * @param oldUsername   username to delete
      */
-    this.cleanEnumName = function(oldUsername,username){
+    this.cleanEnumName = function (oldUsername, username) {
         this.read();//just to be sure we have the latest data
 
-        if(typeof oldUsername !== "string"){
-            log.error("cleanEnumName","need a username to clean");
+        if (typeof oldUsername !== "string") {
+            log.error("cleanEnumName", "need a username to clean");
             return -1;
         }
 
-        if(this.enumName.indexOf(oldUsername) === -1){
-            log.error("cleanEnumName",oldUsername+" doesn't exists, pick another one");
+        if (this.enumName.indexOf(oldUsername) === -1) {
+            log.error("cleanEnumName", oldUsername + " doesn't exists, pick another one");
             return -1;
         }
 
-        if(typeof username === "string") {
-            if(this.enumName.indexOf(username) !== -1){
-                log.error("cleanEnumName renameUser",username+" already exists, pick another one");
+        if (typeof username === "string") {
+            if (this.enumName.indexOf(username) !== -1) {
+                log.error("cleanEnumName renameUser", username + " already exists, pick another one");
                 return -1;
             }
-            return this._renameUser(oldUsername,username);
-        }else{
+            return this._renameUser(oldUsername, username);
+        } else {
             return this._removeUser(oldUsername);
         }
     };
-    this._removeUser = function(userName){
-        this.enumName.splice(this.enumName.indexOf(userName),1);
+    this._removeUser = function (userName) {
+        this.enumName.splice(this.enumName.indexOf(userName), 1);
         //this.enumName = this.sortEnumName(this.enumName);
         delete this.numberMessagePerUser[userName];
         delete this.totalContentPerUser[userName];
@@ -528,7 +591,7 @@ function _StatistiqueService(options) {
         this.statContentMessagePerUser = null;
         //TODO substract all message from user deleted messagePerUserTimeline
 
-        Conversation.update({_id:Conversation.findOne()._id},{$set:{hasStat:false}}); //pour eviter de read a nouveau depuis la datanbase
+        Conversation.update({_id: Conversation.findOne()._id}, {$set: {hasStat: false}}); //pour eviter de read a nouveau depuis la datanbase
         this.setAll();
 
         //Conversation.update({_id:Conversation.findOne()._id},{$set:{hasStat:false}})
@@ -537,7 +600,7 @@ function _StatistiqueService(options) {
         return 1;
 
     };
-    this._renameUser = function(oldUsername,userName){
+    this._renameUser = function (oldUsername, userName) {
         this.enumName[this.enumName.indexOf(oldUsername)] = userName;
 
         this.numberMessagePerUser[userName] = this.numberMessagePerUser[oldUsername];
@@ -549,14 +612,14 @@ function _StatistiqueService(options) {
         this.totalContentPerUser[userName] = this.totalContentPerUser[oldUsername];
         delete this.totalContentPerUser[oldUsername];
 
-        this.numberCharacterPerMessagePerUser[userName] =  this.numberCharacterPerMessagePerUser[oldUsername];
+        this.numberCharacterPerMessagePerUser[userName] = this.numberCharacterPerMessagePerUser[oldUsername];
         delete this.numberCharacterPerMessagePerUser[oldUsername];
 
         this.messagePerUserTimeline[userName] = this.messagePerUserTimeline[oldUsername];
         delete this.messagePerUserTimeline[oldUsername];
 
 
-        Conversation.update({_id:Conversation.findOne()._id},{$set:{hasStat:false}})
+        Conversation.update({_id: Conversation.findOne()._id}, {$set: {hasStat: false}})
         this.update();
 
         return 1;
@@ -568,8 +631,8 @@ function _StatistiqueService(options) {
      */
     this.read = function (callback) {
         if (Conversation.findOne().hasStat === false) {
-        	log.warn("StatistiqueService.read : A statistique is not already set : you can't read a not calculated statistique");
-        	return;
+            log.warn("StatistiqueService.read : A statistique is not already set : you can't read a not calculated statistique");
+            return;
         }
         var dataAttribute = Statistique.findOne({
             ref: this.ref
@@ -602,8 +665,8 @@ function _StatistiqueService(options) {
             }).hasStat === true) {
             log.warn("StatistiqueService.update : A statistique is already set : you can't udpate an already calculated statistique");
             var rep = prompt("A statistique is already set. \nYou can't udpate an already calculated statistique without a password");
-            if(rep !== "kiki"){
-                log.info("StatistiqueService.update","not updated");
+            if (rep !== "kiki") {
+                log.info("StatistiqueService.update", "not updated");
                 return -1;
             }
 
@@ -618,7 +681,7 @@ function _StatistiqueService(options) {
             $set: dataSt
         });
 
-        log.info("StatistiqueService.update","updated");
+        log.info("StatistiqueService.update", "updated");
 
 
         return Conversation.update({
