@@ -34,9 +34,10 @@ public class ConversationRestController {
 
 
     @RequestMapping("parsefile")
-    public ParseFileResponseDTO parseFile(@RequestParam(value = "filename", defaultValue = "sample") String name) {
+    public ParseFileResponseDTO parseFile(@RequestParam(value = "filename", defaultValue = "sample") String conversationName,
+                                          @RequestParam(value = "filename", defaultValue = "sample") String fileName) {
 
-        Boolean result = fileService.parseFile(name);
+        Boolean result = fileService.parseFile(fileName,conversationName);
 
         return new ParseFileResponseDTO(new ArrayList<>(Arrays.asList("OK?", result.toString())));
     }
@@ -54,19 +55,19 @@ public class ConversationRestController {
 
 
     @RequestMapping("getauthors")
-    public ArrayList<Author> getConversationParticipants(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationName){
+    public ArrayList<Author> getConversationParticipants(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationName) {
         return conversationService.getAuthorsByConversationName(conversationName);
     }
 
 
     @RequestMapping("postCountByAuthors")
-    public Map<String,Long> getpostCountByAthors(@RequestParam(value = "conversationname",defaultValue = "sample") String conversationname){
+    public Map<String, Long> getpostCountByAthors(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationname) {
         return conversationService.getPostCountByAthors(conversationname);
     }
 
 
     @RequestMapping("postLengthByAuthors")
-    public Map<String,Long> getPostLengthByAuthors(@RequestParam(value = "conversationname",defaultValue = "sample") String conversationname){
+    public Map<String, Long> getPostLengthByAuthors(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationname) {
         return conversationService.getPostLengthByAuthors(conversationname);
     }
 

@@ -93,6 +93,9 @@ function _StatistiqueService(options) {
         ) {
             this.sortEnumName();
 
+            //We can know get all the data and sort it
+            //this.calculAll();
+
             HighchartsService.prototype.drawHighcharts(this);
 
         } else if (typeof self.enumName == "string") {
@@ -176,7 +179,7 @@ function _StatistiqueService(options) {
      * @param options
      * @returns {*}
      */
-        //OK
+    //OK
     this.getNumberMessagePerUser = function (options) {
         var options = options || {};
         if (typeof options.toSort === "undefined") toSort = true;
@@ -227,6 +230,7 @@ function _StatistiqueService(options) {
         return null;
     };
 
+    //OK
     this.getTotalContentPerUser = function () {
         if (this.totalContentPerUser !== null) return this.totalContentPerUser;
         //if (this.fetchedRows !== null) {
@@ -448,11 +452,18 @@ function _StatistiqueService(options) {
         var ref = this.ref;
         var betweenHours = this.betweenHours;
         var totalContent = 0;
+        var numberMessagePerUser = this.getNumberMessagePerUser();
+
+        //TODO ajax call
         var totalContentPerUser = {};
         var statNumberMessagePerUser = {};
         var numberCharacterPerMessagePerUser = {};
-        var numberMessagePerUser = this.getNumberMessagePerUser();
-        var numberTotalMessage = this.getNumberTotalMessage();
+
+
+
+      //  var numberTotalMessage = this.getNumberTotalMessage(); //plus besoin, coté server uniquement
+
+
         _.each(this.getEnumName(), function (userName) { //for each sorted userName
             var rowsName = Data.find({
                 $and: [{
@@ -470,7 +481,7 @@ function _StatistiqueService(options) {
             _.each(rowsName, function (record) { //for each row (message) of an userName
                 tot += ((typeof record.content === "number") ? record.content : record.content.length);
             });
-            totalContentPerUser[userName] = tot;
+           // totalContentPerUser[userName] = tot;
 
             //stat number message per user
             statNumberMessagePerUser[userName] = numberMessagePerUser[userName] / numberTotalMessage;
@@ -492,11 +503,13 @@ function _StatistiqueService(options) {
         //this.getNumberTotalMessage();
         this.getEnumName();
         this.getNumberMessagePerUser();
+        //once numberMessagePerUser is ready, calculAll is called
+
         //this.sortEnumName();
         //this.calculAll();
         //if (confirm("do you want to calcul the timelime ?\nIt's fucking looong"))
         //    this.getMessagePerUserTimeline();
-        log.info("StatistiqueService.setAll : end");
+        //log.info("StatistiqueService.setAll : end");
 
         //TODO repair this !
         //we only want to store statistique based on the whole data
@@ -505,9 +518,9 @@ function _StatistiqueService(options) {
         //this.update();
         //}
 
-        if (typeof callback === "function") {
-            callback.call(this);
-        }
+        //if (typeof callback === "function") {
+        //    callback.call(this);
+        //}
 
 
     }

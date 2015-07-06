@@ -2,6 +2,9 @@ package co.paan.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldIndex;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.List;
 
@@ -12,11 +15,21 @@ import java.util.List;
 public class Post {
     @Id
     private String id;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
     private String author;
    // @Field(type= FieldType.Nested)
     private String content;
     private String conversationName;
+    private int contentLength;
 
+    public int getContentLength() {
+        return contentLength;
+    }
+
+    public void setContentLength(int contentLength) {
+        this.contentLength = contentLength;
+    }
 
     public String getConversationName() {
         return conversationName;
@@ -40,6 +53,7 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+        this.contentLength = content.length();
     }
 
     public String getId() {

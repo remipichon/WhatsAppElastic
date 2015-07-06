@@ -7,7 +7,7 @@ import java.io.File;
  */
 public interface ParseFileService {
 
-    public Boolean parseFile(String filename);
+    public Boolean parseFile(String fileName, String conversationName);
 
-    public Boolean parseFile(File file);
+    Boolean parseFile(File file, String conversationName);
 }

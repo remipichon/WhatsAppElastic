@@ -24,16 +24,16 @@ public class ParseFileServiceImpl implements ParseFileService {
     private PostService postService;
 
     @Override
-    public Boolean parseFile(String fileName) {
+    public Boolean parseFile(String fileName, String conversationName) {
         //Get file from resources folder
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(fileName).getFile());
 
-        return parseFile(file);
+        return parseFile(file,conversationName);
     }
 
     @Override
-    public Boolean parseFile(File file) {
+    public Boolean parseFile(File file, String conversationName) {
 
         String result = "";
         try (Scanner scanner = new Scanner(file)) {
@@ -41,9 +41,8 @@ public class ParseFileServiceImpl implements ParseFileService {
 
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                result += line;
-                result += "\n";
-                processLine(line);
+
+                result += processLine(line, conversationName);
             }
 
             scanner.close();
@@ -57,20 +56,22 @@ public class ParseFileServiceImpl implements ParseFileService {
         return true;
     }
 
-    //TODO wr conversationName
-    private void processLine(String line) {
+    private String processLine(String line, String conversationName) {
 
         String[] split = line.split("-");
-        if (split.length != 2) return;
+        if (split.length != 2) return "\n";
         String[] split2 = split[1].split(":");
 
-        if (split2.length != 2) return;
+        if (split2.length != 2) return "\n";
 
         Post post = new Post();
         post.setAuthor(split2[0]);
         post.setContent(split2[1]);
+        post.setConversationName(conversationName);
 
         postService.save(post);
+
+        return line + "\n";
 
     }
 
