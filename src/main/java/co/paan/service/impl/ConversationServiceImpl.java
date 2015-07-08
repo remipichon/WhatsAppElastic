@@ -6,14 +6,12 @@ import co.paan.repository.PostRepository;
 import co.paan.rest.DTO.Author;
 import co.paan.service.ConversationService;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.stats.InternalStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,7 @@ import java.util.*;
 public class ConversationServiceImpl implements ConversationService {
 
     @Autowired
-    PostCRUDRepository postCRUDRepository ;
+    PostCRUDRepository postCRUDRepository;
 
     @Autowired
     PostRepository postRepository;
@@ -59,14 +57,32 @@ public class ConversationServiceImpl implements ConversationService {
 
         authors.addAll(authorSet);
 
-        logger.info("authors for conversation "+conversationName,authors);
+        logger.info("authors for conversation " + conversationName, authors);
 
 
         return authors;
     }
 
 
+    /*
 
+      {
+      "query": {
+        "match": {
+          "conversationName": "sample"
+        }
+      },
+        "size": 0,
+        "aggs":{
+          "group_by_author":{
+            "terms": {
+              "field": "author"
+
+            }
+        }
+      }
+    }
+     */
     @Override
     public Map<String, Long> getPostCountByAthors(String conversationName) {
 
@@ -88,9 +104,53 @@ public class ConversationServiceImpl implements ConversationService {
         Terms terms = aggregations.get("getPostCountByAthors");
         Collection<Terms.Bucket> buckets = terms.getBuckets();
         for (Terms.Bucket bucket : buckets) {
-            result.put(bucket.getKey(),bucket.getDocCount());
+            result.put(bucket.getKey(), bucket.getDocCount());
         }
 
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Map<String, Float>> getContentStatAndPostCountByUser(String conversationName) {
+        Map<String, Map<String, Float>> result = new HashMap<>();
+        Map<String, Float> stat;
+        String author;
+        long docCount;
+        Aggregation contentStats;
+
+
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchQuery("conversationName", conversationName))
+                .withIndices("conversation").withTypes("posts")
+                .addAggregation(AggregationBuilders.terms("postCount").field("author")
+                        .subAggregation(AggregationBuilders.stats("content_stats").field("contentLength")))
+                        .build();
+        Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
+            @Override
+            public Aggregations extract(SearchResponse response) {
+
+                return response.getAggregations();
+            }
+        });
+
+        Terms terms = aggregations.get("postCount");
+        Collection<Terms.Bucket> buckets = terms.getBuckets();
+        for (Terms.Bucket bucket : buckets) {
+            author = bucket.getKey();
+            contentStats = bucket.getAggregations().get("content_stats");
+            float count = ((InternalStats) contentStats).getCount();
+            float max = (float) ((InternalStats) contentStats).getMax();
+            float avg = (float) ((InternalStats) contentStats).getAvg();
+            float sum = (float) ((InternalStats) contentStats).getSum();
+            stat = new HashMap<>();
+            stat.put("post_count",count);
+            stat.put("content_max",max);
+            stat.put("content_avg",avg);
+            stat.put("content_sum",sum);
+            result.put(author,stat);
+        }
 
         return result;
     }
@@ -104,7 +164,7 @@ public class ConversationServiceImpl implements ConversationService {
 
         for (Author author : authors) {
             Long lengthTotal = new Long(0);
-            List<Post> byConversationNameAndAuthor = postCRUDRepository.findByConversationNameAndAuthor(null,author.getName()); //TODO use conversationName
+            List<Post> byConversationNameAndAuthor = postCRUDRepository.findByConversationNameAndAuthor(null, author.getName()); //TODO use conversationName
             for (Post post : byConversationNameAndAuthor) {
                 lengthTotal += post.getContent().length();
             }
@@ -115,7 +175,6 @@ public class ConversationServiceImpl implements ConversationService {
 
         return result;
     }
-
 
 
 }

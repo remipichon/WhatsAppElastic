@@ -71,5 +71,16 @@ public class ConversationRestController {
         return conversationService.getPostLengthByAuthors(conversationname);
     }
 
+    /**
+     *
+     * @param conversationname
+     * @return USERNAME : { STATNAME: VALUE... }
+     */
+    @RequestMapping("contentStatAndPostCountByUser")
+    public Map<String,Map<String,Float>> getContentStatAndPostCountByUser(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationname){
+        return conversationService.getContentStatAndPostCountByUser(conversationname);
+    }
+
+
 
 }

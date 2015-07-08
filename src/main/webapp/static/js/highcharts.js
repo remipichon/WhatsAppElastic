@@ -5,8 +5,8 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
     //perharps the user or Worker will help
     var enumName = statistique.getEnumName();
     var numberMessagePerUser = statistique.getNumberMessagePerUser();
-    //var numberCharacterPerMessagePerUser = statistique.getNumberCharacterPerMessagePerUser();
-    var totalContentPerUser = statistique.getTotalContentPerUser(); //TODO
+    var numberCharacterPerMessagePerUser = statistique.getNumberCharacterPerMessagePerUser();
+    var totalContentPerUser = statistique.getTotalContentPerUser();
 
     var $chart = $('#user-bar-chart');
     if (typeof $chart.highcharts() !== "undefined") $chart.highcharts().destroy();
@@ -57,14 +57,14 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
             yAxis: 0
         },
             {
-           /* name: 'Content per message typed',
+           name: 'Average content char per message typed',
             color: 'rgba(209, 50, 144, 0.7)',
             data: _.values(numberCharacterPerMessagePerUser),
             pointPadding: 0.3,
             pointPlacement: -0.2,
             yAxis: 1
-        }, {*/
-            name: 'Content typed',
+        }, {
+            name: 'Total content typed',
             color: 'rgba(144, 237, 125,0.7);',
             data: _.values(totalContentPerUser),
             pointPadding: 0.4,

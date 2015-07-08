@@ -179,6 +179,51 @@ function _StatistiqueService(options) {
      * @param options
      * @returns {*}
      */
+
+    //new
+    this.getContentStatAndPostCountByUser = function(){
+        var self = this;
+        $.ajax({
+            url: '/api/conversation/contentStatAndPostCountByUser', //TODO send conversation ref
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var occurences = data;
+
+
+                self.numberMessagePerUser = {};
+                self.numberCharacterPerMessagePerUser = {};
+                self.totalContentPerUser = {};
+                self.enumName = [];
+                _.each(occurences,function(key,value){
+                    self.numberMessagePerUser[value] = key.post_count;
+                    self.numberCharacterPerMessagePerUser[value] = key.content_avg;
+                    self.totalContentPerUser[value] = key.content_sum;
+                    self.enumName.push(value);
+                });
+
+
+
+                //if (toSort === true)
+                //    occurences = self.sortObject(occurences);
+                //if (refetch == false) {
+                //we only update this if we are not explicitely recalculating it via refetch
+                //self.numberMessagePerUser = occurences;
+                //}
+
+                //self.numberMessagePerUser = occurences;
+                //self.statAvailable();
+                HighchartsService.prototype.drawHighcharts(self);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+               // self.numberMessagePerUser = errorThrown; //TODO
+            }
+        });
+    }
+
+
     //OK
     this.getNumberMessagePerUser = function (options) {
         var options = options || {};
@@ -501,8 +546,11 @@ function _StatistiqueService(options) {
         log.info("StatistiqueService.setAll : starting ...")
         //this.fetchesRows();
         //this.getNumberTotalMessage();
-        this.getEnumName();
-        this.getNumberMessagePerUser();
+        this.getContentStatAndPostCountByUser();
+
+        //this.getEnumName();
+        //this.getNumberMessagePerUser();
+
         //once numberMessagePerUser is ready, calculAll is called
 
         //this.sortEnumName();
