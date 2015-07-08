@@ -13,6 +13,7 @@ public interface PostCRUDRepository extends CrudRepository<Post,String> {
 
     Long countByAuthor(String author);
 
+    Integer countByConversationName(String conversationName);
 
     List<Post> findByConversationName(String conversationName);
 

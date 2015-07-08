@@ -19,10 +19,14 @@ public class HelloControler {
     @Autowired
     GreetingServiceImpl greetingService;
 
+
+
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
         return greetingService.getGreeting();
     }
+
+
 
     @RequestMapping("/resource")
     public Map<String,Object> home() {

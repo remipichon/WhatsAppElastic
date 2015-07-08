@@ -96,7 +96,6 @@ public class ConversationServiceImpl implements ConversationService {
         Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
             @Override
             public Aggregations extract(SearchResponse response) {
-
                 return response.getAggregations();
             }
         });
@@ -151,6 +150,60 @@ public class ConversationServiceImpl implements ConversationService {
             stat.put("content_sum",sum);
             result.put(author,stat);
         }
+
+        return result;
+    }
+
+    @Override
+    public Integer getTotalMessage(String conversationName) {
+        return postCRUDRepository.countByConversationName(conversationName);
+    }
+
+    @Override
+    public Double getTotalContent(String conversationName) {
+
+
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchPhraseQuery("conversationName",conversationName))
+                .withIndices("conversation").withTypes("posts")
+                .addAggregation(AggregationBuilders.stats("content_stats").field("contentLength"))
+                .build();
+
+        Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
+            @Override
+            public Aggregations extract(SearchResponse response) {
+                return response.getAggregations();
+            }
+        });
+
+        return ((InternalStats) aggregations.get("content_stats")).getSum();
+    }
+
+    @Override
+    public Map<String, Map<String, Double>> getProportionMessageAndContentPerUser(String conversationName) {
+        Map<String, Map<String, Double>> result = new HashMap<>();
+        Map<String, Double> proportion;
+
+
+
+        Map<String, Map<String, Float>> contentStatAndPostCountByUser = this.getContentStatAndPostCountByUser(conversationName);
+
+        Integer totalMessage = this.getTotalMessage(conversationName);
+        Double totalContent = this.getTotalContent(conversationName);
+
+        for (Map.Entry<String, Map<String, Float>> entry : contentStatAndPostCountByUser.entrySet()) {
+            String author = entry.getKey();
+            Map<String, Float> stats = entry.getValue();
+            Float post_count = stats.get("post_count");
+            Float content_sum = stats.get("content_sum");
+            proportion = new HashMap<>();
+            proportion.put("post_proportion", post_count.doubleValue()/totalMessage);
+            proportion.put("content_proportion", content_sum/totalContent);
+            result.put(author,proportion);
+
+        }
+
 
         return result;
     }

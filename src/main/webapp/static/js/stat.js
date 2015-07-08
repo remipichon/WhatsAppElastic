@@ -198,7 +198,7 @@ function _StatistiqueService(options) {
                 self.enumName = [];
                 _.each(occurences,function(key,value){
                     self.numberMessagePerUser[value] = key.post_count;
-                    self.numberCharacterPerMessagePerUser[value] = key.content_avg;
+                    self.numberCharacterPerMessagePerUser[value] = parseInt(key.content_avg);
                     self.totalContentPerUser[value] = key.content_sum;
                     self.enumName.push(value);
                 });
@@ -222,6 +222,45 @@ function _StatistiqueService(options) {
             }
         });
     }
+
+    //new
+    this.getProportionMessageAndContent = function () {
+        var self = this;
+        $.ajax({
+            url: '/api/conversation/proportionMessageAndContentPerUser', //TODO send conversation ref
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var occurences = data;
+
+
+                self.statContentMessagePerUser = {};
+                self.statNumberMessagePerUser = {};
+                _.each(occurences,function(key,value){
+                    self.statContentMessagePerUser[value] = key.content_proportion;
+                    self.statNumberMessagePerUser[value] = key.post_proportion;
+                });
+
+
+
+                //if (toSort === true)
+                //    occurences = self.sortObject(occurences);
+                //if (refetch == false) {
+                //we only update this if we are not explicitely recalculating it via refetch
+                //self.numberMessagePerUser = occurences;
+                //}
+
+                //self.numberMessagePerUser = occurences;
+                //self.statAvailable();
+                HighchartsService.prototype.drawHighcharts(self);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // self.numberMessagePerUser = errorThrown; //TODO
+            }
+        });
+    };
 
 
     //OK
@@ -541,12 +580,15 @@ function _StatistiqueService(options) {
     };
 
 
+
     this.setAll = function (callback) {
         //this.read();
         log.info("StatistiqueService.setAll : starting ...")
         //this.fetchesRows();
         //this.getNumberTotalMessage();
         this.getContentStatAndPostCountByUser();
+
+        this.getProportionMessageAndContent();
 
         //this.getEnumName();
         //this.getNumberMessagePerUser();

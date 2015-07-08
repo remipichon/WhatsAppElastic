@@ -26,10 +26,10 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
             title: {
                 text: 'Messages'
             }
-        /*}, {
+        }, {
             title: {
                 text: 'Content per message'
-            },*/
+            }
         }, {
             title: {
                 text: 'Content (nb caracters)'
@@ -58,7 +58,7 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
         },
             {
            name: 'Average content char per message typed',
-            color: 'rgba(209, 50, 144, 0.7)',
+            color: 'rgba(209, 50, 144, 0.3)',
             data: _.values(numberCharacterPerMessagePerUser),
             pointPadding: 0.3,
             pointPlacement: -0.2,
@@ -69,7 +69,7 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
             data: _.values(totalContentPerUser),
             pointPadding: 0.4,
             pointPlacement: -0.2,
-            yAxis: 1
+            yAxis: 2
         }
         ]
     });
@@ -219,8 +219,8 @@ HighchartsService.prototype.drawHighcharts = function(statistique) {
     }
     var highchartsService = new HighchartsService();
     highchartsService.drawUserBarChart(statistique);
-   // highchartsService.drawMessageUserPieChart(statistique);
-   // highchartsService.drawContentUserPieChart(statistique);
+   highchartsService.drawMessageUserPieChart(statistique);
+   highchartsService.drawContentUserPieChart(statistique);
    //highchartsService.drawMessageBarChartTimeline(statistique);
 }
 

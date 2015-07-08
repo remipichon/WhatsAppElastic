@@ -82,5 +82,11 @@ public class ConversationRestController {
     }
 
 
+    @RequestMapping("proportionMessageAndContentPerUser")
+    public Map<String, Map<String, Double>> getProportionMessageAndContentPerUser(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationName){
+        return conversationService.getProportionMessageAndContentPerUser(conversationName);
+    }
+
+
 
 }
