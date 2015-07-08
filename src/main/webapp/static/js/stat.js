@@ -180,7 +180,7 @@ function _StatistiqueService(options) {
      * @returns {*}
      */
 
-    //new
+    //OK - used by Highchart
     this.getContentStatAndPostCountByUser = function(){
         var self = this;
         $.ajax({
@@ -198,10 +198,21 @@ function _StatistiqueService(options) {
                 self.enumName = [];
                 _.each(occurences,function(key,value){
                     self.numberMessagePerUser[value] = key.post_count;
-                    self.numberCharacterPerMessagePerUser[value] = parseInt(key.content_avg);
-                    self.totalContentPerUser[value] = key.content_sum;
+                    //self.numberCharacterPerMessagePerUser[value] = parseInt(key.content_avg);
+                    //self.totalContentPerUser[value] = key.content_sum;
+                    //self.enumName.push(value);
+                });
+
+
+                self.numberMessagePerUser = self.sortObject(self.numberMessagePerUser);
+
+                _.each(self.numberMessagePerUser,function(key,value){
+                    self.numberCharacterPerMessagePerUser[value] = parseInt(occurences[value].content_avg);
+                    self.totalContentPerUser[value] = occurences[value].content_sum;
                     self.enumName.push(value);
                 });
+
+
 
 
 
@@ -223,7 +234,7 @@ function _StatistiqueService(options) {
         });
     }
 
-    //new
+    //OK - used by Highchart
     this.getProportionMessageAndContent = function () {
         var self = this;
         $.ajax({
@@ -234,7 +245,6 @@ function _StatistiqueService(options) {
             success: function (data) {
                 var occurences = data;
 
-
                 self.statContentMessagePerUser = {};
                 self.statNumberMessagePerUser = {};
                 _.each(occurences,function(key,value){
@@ -242,22 +252,14 @@ function _StatistiqueService(options) {
                     self.statNumberMessagePerUser[value] = key.post_proportion;
                 });
 
+                self.statContentMessagePerUser =  self.sortObject(self.statContentMessagePerUser);
+                self.statNumberMessagePerUser =  self.sortObject(self.statNumberMessagePerUser);
 
-
-                //if (toSort === true)
-                //    occurences = self.sortObject(occurences);
-                //if (refetch == false) {
-                //we only update this if we are not explicitely recalculating it via refetch
-                //self.numberMessagePerUser = occurences;
-                //}
-
-                //self.numberMessagePerUser = occurences;
-                //self.statAvailable();
                 HighchartsService.prototype.drawHighcharts(self);
-
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                // self.numberMessagePerUser = errorThrown; //TODO
+                self.statContentMessagePerUser = errorThrown;
+                self.statNumberMessagePerUser = errorThrown;
             }
         });
     };

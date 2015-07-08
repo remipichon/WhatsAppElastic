@@ -1,6 +1,7 @@
-HighchartsService = function() {}
+HighchartsService = function () {
+}
 
-HighchartsService.prototype.drawUserBarChart = function(statistique) {
+HighchartsService.prototype.drawUserBarChart = function (statistique) {
 
     //perharps the user or Worker will help
     var enumName = statistique.getEnumName();
@@ -47,7 +48,7 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
                 shadow: false,
                 borderWidth: 0
             }
-            },
+        },
         series: [{
             name: 'Messages sent',
             color: 'rgba(124, 181, 236,0.7)',
@@ -57,26 +58,26 @@ HighchartsService.prototype.drawUserBarChart = function(statistique) {
             yAxis: 0
         },
             {
-           name: 'Average content char per message typed',
-            color: 'rgba(209, 50, 144, 0.3)',
-            data: _.values(numberCharacterPerMessagePerUser),
-            pointPadding: 0.3,
-            pointPlacement: -0.2,
-            yAxis: 1
-        }, {
-            name: 'Total content typed',
-            color: 'rgba(144, 237, 125,0.7);',
-            data: _.values(totalContentPerUser),
-            pointPadding: 0.4,
-            pointPlacement: -0.2,
-            yAxis: 2
-        }
+                name: 'Average content char per message typed',
+                color: 'rgba(209, 50, 144, 0.3)',
+                data: _.values(numberCharacterPerMessagePerUser),
+                pointPadding: 0.3,
+                pointPlacement: -0.2,
+                yAxis: 1
+            }, {
+                name: 'Total content typed',
+                color: 'rgba(144, 237, 125,0.7);',
+                data: _.values(totalContentPerUser),
+                pointPadding: 0.4,
+                pointPlacement: -0.2,
+                yAxis: 2
+            }
         ]
     });
 }
 
 
-HighchartsService.prototype.drawContentUserPieChart = function(statistique) {
+HighchartsService.prototype.drawContentUserPieChart = function (statistique) {
 
     var statContentMessagePerUser = statistique.getStatContentMessagePerUser()
 
@@ -111,7 +112,7 @@ HighchartsService.prototype.drawContentUserPieChart = function(statistique) {
         series: [{
             type: 'pie',
             name: 'Number caracteres sent',
-            data: _.map(statContentMessagePerUser, function(num, key) {
+            data: _.map(statContentMessagePerUser, function (num, key) {
                 return [key, num];
             })
         }]
@@ -119,7 +120,7 @@ HighchartsService.prototype.drawContentUserPieChart = function(statistique) {
 }
 
 
-HighchartsService.prototype.drawMessageUserPieChart = function(statistique) {
+HighchartsService.prototype.drawMessageUserPieChart = function (statistique) {
 
     var statNumberMessagePerUser = statistique.getStatNumberMessagePerUser();
 
@@ -156,7 +157,7 @@ HighchartsService.prototype.drawMessageUserPieChart = function(statistique) {
         series: [{
             type: 'pie',
             name: 'Messages sent',
-            data: _.map(statNumberMessagePerUser, function(num, key) {
+            data: _.map(statNumberMessagePerUser, function (num, key) {
                 return [key, num];
             })
         }]
@@ -164,20 +165,20 @@ HighchartsService.prototype.drawMessageUserPieChart = function(statistique) {
 }
 
 
-HighchartsService.prototype.drawMessageBarChartTimeline = function(statistique) {
+HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique) {
     var categories = [];
 
     var series = [];
     var messagePerUserTimeline = statistique.getMessagePerUserTimeline();
-    _.each(messagePerUserTimeline,function(value,name){
+    _.each(messagePerUserTimeline, function (value, name) {
         series.push({
             name: name,
             data: value
         });
     });
 
-    for(var i = 0; i<=23;i++){
-        categories.push(i+"h")
+    for (var i = 0; i <= 23; i++) {
+        categories.push(i + "h")
     }
 
     $('#user-bar-chart-timeline').highcharts({
@@ -212,22 +213,22 @@ HighchartsService.prototype.drawMessageBarChartTimeline = function(statistique) 
 }
 
 
-HighchartsService.prototype.drawHighcharts = function(statistique) {
+HighchartsService.prototype.drawHighcharts = function (statistique) {
 
     if (!statistique instanceof StatistiqueService) {
         return log.error("drawHighcharts : not statistique args");
     }
     var highchartsService = new HighchartsService();
     highchartsService.drawUserBarChart(statistique);
-   highchartsService.drawMessageUserPieChart(statistique);
-   highchartsService.drawContentUserPieChart(statistique);
-   //highchartsService.drawMessageBarChartTimeline(statistique);
+    highchartsService.drawMessageUserPieChart(statistique);
+    highchartsService.drawContentUserPieChart(statistique);
+    //highchartsService.drawMessageBarChartTimeline(statistique);
 }
 
 
-HighchartsService.prototype.initDrawHighcharts = function() {
+HighchartsService.prototype.initDrawHighcharts = function () {
     delete statistique;
-    statistique =  new StatistiqueService({
+    statistique = new StatistiqueService({
         ref: "sample", //TODO
         calculAll: true //to get and draw //TODO rename attribute to offer : getAll, getAll+drawAll
     });
@@ -276,9 +277,9 @@ HighchartsService.prototype.initDrawHighcharts = function() {
 }
 
 // must be after adding methods to prototype
-Aop.around("", function(f) {   
-    log.info( " AOPbefore HighchartsService." + f.fnName, "called with", ((arguments[0].arguments.length == 0) ? "no args" : arguments[0].arguments));
-    var retour = Aop.next(f,HighchartsService.prototype); //mandatory
-    log.info( " AOPafter HighchartsService." + f.fnName, "which returned", retour);
+Aop.around("", function (f) {
+    log.info(" AOPbefore HighchartsService." + f.fnName, "called with", ((arguments[0].arguments.length == 0) ? "no args" : arguments[0].arguments));
+    var retour = Aop.next(f, HighchartsService.prototype); //mandatory
+    log.info(" AOPafter HighchartsService." + f.fnName, "which returned", retour);
     return retour; //mandatory
 }, [HighchartsService.prototype]);
