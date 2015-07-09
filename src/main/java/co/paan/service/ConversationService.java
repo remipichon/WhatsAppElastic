@@ -24,4 +24,5 @@ public interface ConversationService {
 
     Double getTotalContent(String conversationName);
 
+    Map<String, Map<Integer, Integer>> getPostCountPerUserPerHour(String conversationName);
 }

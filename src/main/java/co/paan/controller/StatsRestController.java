@@ -32,4 +32,9 @@ public class StatsRestController {
     public Map<String, Map<String, Double>> getProportionMessageAndContentPerUser(@RequestParam(value = "conversationName") String conversationName){
         return conversationService.getProportionMessageAndContentPerUser(conversationName);
     }
+
+    @RequestMapping("postCountPerUserPerHour")
+    public Map<String,Map<Integer,Integer>> getPostCountPerUserPerHour(@RequestParam(value = "conversationName") String conversationName){
+        return conversationService.getPostCountPerUserPerHour(conversationName);
+    }
 }

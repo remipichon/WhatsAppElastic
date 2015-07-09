@@ -211,4 +211,8 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
 
+    @Override
+    public Map<String, Map<Integer, Integer>> getPostCountPerUserPerHour(String conversationName) {
+        return null;
+    }
 }
