@@ -24,7 +24,6 @@ $(document).ready(function() {
 
     ModalControler.prototype.initModal();
 
-    // test.drawHightcharts("sample");
 
     //don't why I have to do this
     $("#filename").css("cursor","pointer");
