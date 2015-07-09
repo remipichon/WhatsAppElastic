@@ -184,13 +184,12 @@ function _StatistiqueService(options) {
     this.getContentStatAndPostCountByUser = function(){
         var self = this;
         $.ajax({
-            url: '/api/conversation/contentStatAndPostCountByUser', //TODO send conversation ref
+            url: '/api/stats/contentStatAndPostCountByUser',
             type: 'GET',
             async: true,
             dataType: "json",
             success: function (data) {
                 var occurences = data;
-
 
                 self.numberMessagePerUser = {};
                 self.numberCharacterPerMessagePerUser = {};
@@ -238,7 +237,7 @@ function _StatistiqueService(options) {
     this.getProportionMessageAndContent = function () {
         var self = this;
         $.ajax({
-            url: '/api/conversation/proportionMessageAndContentPerUser', //TODO send conversation ref
+            url: '/api/stats/proportionMessageAndContentPerUser', //TODO send conversation ref
             type: 'GET',
             async: true,
             dataType: "json",
@@ -585,7 +584,7 @@ function _StatistiqueService(options) {
 
     this.setAll = function (callback) {
         //this.read();
-        log.info("StatistiqueService.setAll : starting ...")
+        //log.info("StatistiqueService.setAll : starting ...")
         //this.fetchesRows();
         //this.getNumberTotalMessage();
         this.getContentStatAndPostCountByUser();
@@ -813,28 +812,42 @@ function _StatistiqueService(options) {
 }
 /*** AOP by RemiP**/
 StatistiqueService = function (options) {
-    var options = options || {};
-    var initAop = (typeof options.initAop !== "undefined") ? options.initAop : true
+
+    var conversationName = options.conversationName;
+    //add/replace conversationName to all request
+    $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        if(options.url.indexOf('?conversationName=') !== -1){
+            //we need to remove previous conversationName
+            options.url = options.url.split("?conversationName=")[0];
+        }
+        options.url += "?conversationName="+conversationName;
+    });
+
+
+
+
+    //var options = options || {};
+    //var initAop = (typeof options.initAop !== "undefined") ? options.initAop : true
     //to match old way
-    if (typeof options !== "object") {
-        var calculAll = calculAll || false;
-    } else {
-        var calculAll = (typeof options.calculAll !== "undefined") ? options.calculAll : true;
-    }
+    //if (typeof options !== "object") {
+    //    var calculAll = calculAll || false;
+    //} else {
+    //    var calculAll = (typeof options.calculAll !== "undefined") ? options.calculAll : true;
+    //}
     //var ref = options.ref || Conversation.findOne().name || null;
-    var ref = options.ref || null;
+    //var ref = options.ref || null;
 
     var statistique = new _StatistiqueService({
-        calculAll: false, //false pour laisser le temps à l'aop d'etre init
-        ref: ref
+        //calculAll: false, //false pour laisser le temps à l'aop d'etre init
+        conversationName: conversationName
     });
-    if (!initAop) {
-        if (calculAll) {
-            statistique.setAll();
-        }
-        log.trace("StatistiqueService : skip AOP");
-        return statistique
-    }
+    //if (!initAop) {
+    //    if (calculAll) {
+    //        statistique.setAll();
+    //    }
+    //    log.trace("StatistiqueService : skip AOP");
+    //    return statistique
+    //}
     var arrayProperties = Object.getOwnPropertyNames(statistique);
     for (var id = 0; id < arrayProperties.length; id++) {
         var property = arrayProperties[id];
@@ -852,9 +865,9 @@ StatistiqueService = function (options) {
         }
     }
 
-    if (calculAll) {
+    //if (calculAll) {
         statistique.setAll();
-    }
+    //}
 
     return statistique;
 };

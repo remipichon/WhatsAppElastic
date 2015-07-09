@@ -1,5 +1,7 @@
 package co.paan.service;
 
+import co.paan.rest.DTO.ParseFileResponseDTO;
+
 import java.io.File;
 
 /**
@@ -7,7 +9,6 @@ import java.io.File;
  */
 public interface ParseFileService {
 
-    public Boolean parseFile(String fileName, String conversationName);
+    public ParseFileResponseDTO parseFile(String fileName, String conversationName);
 
-    Boolean parseFile(File file, String conversationName);
 }

@@ -229,8 +229,8 @@ HighchartsService.prototype.drawHighcharts = function (statistique) {
 HighchartsService.prototype.initDrawHighcharts = function () {
     delete statistique;
     statistique = new StatistiqueService({
-        ref: "sample", //TODO
-        calculAll: true //to get and draw //TODO rename attribute to offer : getAll, getAll+drawAll
+        conversationName: "sample" //TODO
+        //calculAll: true //to get and draw //TODO rename attribute to offer : getAll, getAll+drawAll
     });
 
     //TODO DateTimePicker and conversationName

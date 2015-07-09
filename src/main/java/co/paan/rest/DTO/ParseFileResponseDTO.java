@@ -7,18 +7,27 @@ import java.util.ArrayList;
  */
 public class ParseFileResponseDTO {
 
-    ArrayList<String> posts;
+    int postCount;
+    int lineCount;
 
-
-    public ParseFileResponseDTO(ArrayList<String> posts) {
-        this.posts = posts;
+    public ParseFileResponseDTO(int postCount, int lineCount) {
+        this.postCount = postCount;
+        this.lineCount = lineCount;
     }
 
-    public ArrayList<String> getPosts() {
-        return posts;
+    public int getPostCount() {
+        return postCount;
     }
 
-    public void setPosts(ArrayList<String> posts) {
-        this.posts = posts;
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
+    }
+
+    public int getLineCount() {
+        return lineCount;
+    }
+
+    public void setLineCount(int lineCount) {
+        this.lineCount = lineCount;
     }
 }

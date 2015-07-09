@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -34,19 +35,17 @@ public class ConversationRestController {
 
 
     @RequestMapping("parsefile")
-    public ParseFileResponseDTO parseFile(@RequestParam(value = "filename", defaultValue = "sample") String conversationName,
-                                          @RequestParam(value = "filename", defaultValue = "sample") String fileName) {
-
-        Boolean result = fileService.parseFile(fileName,conversationName);
-
-        return new ParseFileResponseDTO(new ArrayList<>(Arrays.asList("OK?", result.toString())));
+    public @ResponseBody
+    ParseFileResponseDTO parseFile(@RequestParam(value = "conversationName") String conversationName,
+                                          @RequestParam(value = "filename") String fileName) {
+        return fileService.parseFile(fileName,conversationName);
     }
 
 
-    //    //TODO DEBUG ONLY
+    //TODO DEBUG ONLY
     @RequestMapping("deleteAllPost")
+    @Deprecated
     public void deleteAllPost() {
-
         elasticsearchTemplate.deleteIndex(Post.class);
         elasticsearchTemplate.createIndex(Post.class);
         elasticsearchTemplate.putMapping(Post.class);
@@ -55,37 +54,12 @@ public class ConversationRestController {
 
 
     @RequestMapping("getauthors")
-    public ArrayList<Author> getConversationParticipants(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationName) {
+    public ArrayList<Author> getConversationParticipants(@RequestParam(value = "conversationName") String conversationName) {
         return conversationService.getAuthorsByConversationName(conversationName);
     }
 
 
-    @RequestMapping("postCountByAuthors")
-    public Map<String, Long> getpostCountByAthors(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationname) {
-        return conversationService.getPostCountByAthors(conversationname);
-    }
 
-
-    @RequestMapping("postLengthByAuthors")
-    public Map<String, Long> getPostLengthByAuthors(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationname) {
-        return conversationService.getPostLengthByAuthors(conversationname);
-    }
-
-    /**
-     *
-     * @param conversationname
-     * @return USERNAME : { STATNAME: VALUE... }
-     */
-    @RequestMapping("contentStatAndPostCountByUser")
-    public Map<String,Map<String,Float>> getContentStatAndPostCountByUser(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationname){
-        return conversationService.getContentStatAndPostCountByUser(conversationname);
-    }
-
-
-    @RequestMapping("proportionMessageAndContentPerUser")
-    public Map<String, Map<String, Double>> getProportionMessageAndContentPerUser(@RequestParam(value = "conversationname", defaultValue = "sample") String conversationName){
-        return conversationService.getProportionMessageAndContentPerUser(conversationName);
-    }
 
 
 
