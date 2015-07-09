@@ -25,6 +25,8 @@ $(document).ready(function() {
     ModalControler.prototype.initModal();
 
 
+
+
     //don't why I have to do this
     $("#filename").css("cursor","pointer");
 });

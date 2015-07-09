@@ -1,7 +1,6 @@
 package co.paan.controller;
 
 
-import co.paan.domain.Greeting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +18,4 @@ public class HelloControler {
     public String health(@RequestParam(value="name", defaultValue="World") String name) {
         return "OK";
     }
-
-
 }

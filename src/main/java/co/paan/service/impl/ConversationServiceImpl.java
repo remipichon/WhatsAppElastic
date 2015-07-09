@@ -64,25 +64,6 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
 
-    /*
-
-      {
-      "query": {
-        "match": {
-          "conversationName": "sample"
-        }
-      },
-        "size": 0,
-        "aggs":{
-          "group_by_author":{
-            "terms": {
-              "field": "author"
-
-            }
-        }
-      }
-    }
-     */
     @Override
     public Map<String, Long> getPostCountByAthors(String conversationName) {
 
