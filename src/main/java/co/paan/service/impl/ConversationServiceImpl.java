@@ -6,13 +6,11 @@ import co.paan.repository.PostRepository;
 import co.paan.rest.DTO.Author;
 import co.paan.service.ConversationService;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -26,7 +24,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -251,4 +248,18 @@ public class ConversationServiceImpl implements ConversationService {
         return result;
     }
 
+    @Override
+    public Map<Integer, Map<String, Long>> getPostCountPerUserPerMonth(String conversationName, String year) {
+        Map<Integer, Map<String, Long>> result = new HashMap<>();
+
+        for (int month = 1; month <= 12; month++) {
+            String monthStr = (month < 10) ? "0" + month : String.valueOf(month);
+            String startDate = year+"-"+monthStr+"-"+"01";
+            String endDate = year+"-"+monthStr+"-"+"25";
+            Map<String, Long> postCountPerUserBetweenDate = getPostCountPerUserBetweenDate(conversationName, startDate, endDate);
+            result.put(month,postCountPerUserBetweenDate);
+        }
+
+        return result;
+    }
 }

@@ -43,6 +43,13 @@ public class StatsRestController {
             @RequestParam(value = "conversationName") String conversationName,
             @RequestParam(value = "beginDate") String startDate,
             @RequestParam(value = "endDate") String endDate){
-        return conversationService.getPostCountPerUserBetweenDate(conversationName,startDate,endDate);
+        return conversationService.getPostCountPerUserBetweenDate(conversationName, startDate, endDate);
+    }
+
+    @RequestMapping("postCountPerUserPerMonth")
+    public Map<Integer, Map<String, Long>> getPostCountPerUserPerMonth(
+            @RequestParam(value = "conversationName") String conversationName,
+            @RequestParam(value = "year") String year){
+        return conversationService.getPostCountPerUserPerMonth(conversationName,year);
     }
 }
