@@ -168,6 +168,9 @@ HighchartsService.prototype.drawMessageUserPieChart = function (statistique) {
 HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique) {
     var categories = [];
 
+    var $chart = $('#user-bar-chart-timeline');
+    if (typeof $chart.highcharts() !== "undefined") $chart.highcharts().destroy();
+
     var series = [];
     var messagePerUserTimeline = statistique.getMessagePerUserTimeline();
     _.each(messagePerUserTimeline, function (value, name) {
@@ -177,13 +180,14 @@ HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique)
         });
     });
 
-    for (var i = 0; i <= 23; i++) {
-        categories.push(i + "h")
+    var month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
+    for (var i = 1; i <= 12; i++) {
+        categories.push(month[i-1])
     }
 
     $('#user-bar-chart-timeline').highcharts({
         title: {
-            text: 'Message per user per hour',
+            text: 'Message per user per month',
             x: -20 //center
         },
         xAxis: {
@@ -222,14 +226,14 @@ HighchartsService.prototype.drawHighcharts = function (statistique) {
     highchartsService.drawUserBarChart(statistique);
     highchartsService.drawMessageUserPieChart(statistique);
     highchartsService.drawContentUserPieChart(statistique);
-    //highchartsService.drawMessageBarChartTimeline(statistique);
+    highchartsService.drawMessageBarChartTimeline(statistique);
 }
 
 
 HighchartsService.prototype.initDrawHighcharts = function () {
     delete statistique;
     statistique = new StatistiqueService({
-        conversationName: "sample" //TODO
+        conversationName: "sample_newFormat" //TODO
         //calculAll: true //to get and draw //TODO rename attribute to offer : getAll, getAll+drawAll
     });
 

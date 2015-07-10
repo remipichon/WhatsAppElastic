@@ -262,4 +262,29 @@ public class ConversationServiceImpl implements ConversationService {
 
         return result;
     }
+
+    @Override
+    public Map<String, Map<Integer, Long>> getPostCountPerMonthPerUser(String conversationName, String year) {
+        Map<String, Map<Integer, Long>> result = new HashMap<>();
+
+        Map<Integer, Map<String, Long>> postCountPerUserPerMonth = getPostCountPerUserPerMonth(conversationName, year);
+
+        for (Map.Entry<Integer, Map<String, Long>> integerMapEntry : postCountPerUserPerMonth.entrySet()) {
+            Integer month = integerMapEntry.getKey();
+            Map<String, Long> authorsCount = integerMapEntry.getValue();
+            for (Map.Entry<String, Long> stringLongEntry : authorsCount.entrySet()) {
+                String author = stringLongEntry.getKey();
+                Long count = stringLongEntry.getValue();
+                if(result.get(author) == null){
+                    Map<Integer,Long> monthsCount = new HashMap<>();
+                    monthsCount.put(month,count);
+                    result.put(author,monthsCount);
+                } else{
+                    result.get(author).put(month,count);
+                }
+            }
+        }
+
+        return result;
+    }
 }

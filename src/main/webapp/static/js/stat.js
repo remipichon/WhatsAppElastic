@@ -224,7 +224,9 @@ function _StatistiqueService(options) {
 
                 //self.numberMessagePerUser = occurences;
                 //self.statAvailable();
-                HighchartsService.prototype.drawHighcharts(self);
+                //HighchartsService.prototype.drawHighcharts(self);
+
+                highchartsService.drawUserBarChart(statistique);
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -254,7 +256,10 @@ function _StatistiqueService(options) {
                 self.statContentMessagePerUser =  self.sortObject(self.statContentMessagePerUser);
                 self.statNumberMessagePerUser =  self.sortObject(self.statNumberMessagePerUser);
 
-                HighchartsService.prototype.drawHighcharts(self);
+                //HighchartsService.prototype.drawHighcharts(self);
+                highchartsService.drawMessageUserPieChart(statistique);
+                highchartsService.drawContentUserPieChart(statistique);
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 self.statContentMessagePerUser = errorThrown;
@@ -347,6 +352,7 @@ function _StatistiqueService(options) {
 
                 self.totalContentPerUser = occurences;
                 self.statAvailable();
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 self.totalContentPerUser = errorThrown;
@@ -451,74 +457,126 @@ function _StatistiqueService(options) {
     };
 
     this.getMessagePerUserTimeline = function (callback) {
+        if(this.messagePerUserTimeline != null) return this.messagePerUserTimeline;
+        var self = this;
+        $.ajax({
+            url: '/api/stats/postCountPerMonthPerUser?year=2015',
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var occurences = {};
+
+                /*
+                from
+                {
+                    author : {
+                        monthNb: count,...
+                    }
+                }
+                to
+                {
+                    author: [
+                        countMonth0, countMonth1,... //avec du padding s'il faut
+                    ]
+                }
+                 */
+
+                _.each(data,function(monthsCount,author){
+                    var arrayMonth = [];
+                    //_.each(monthsCount,function(count, monthNb){
+                    //   arrayMonth[]
+                    //});
+                    for(var i = 0; i< 12; i++){
+                        var count = monthsCount[i+1]; //backend give month in range [1,12] Highcarts needs [0,11]
+                        arrayMonth.push((count != null)? count: 0);
+                    }
+
+
+                    occurences[author] = arrayMonth;
+                });
+
+                self.messagePerUserTimeline = occurences;
+                //self.statAvailable();
+                //self.statAvailable();
+                //HighchartsService.prototype.drawHighcharts(self);
+                highchartsService.drawMessageBarChartTimeline(statistique);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                self.messagePerUserTimeline = errorThrown;
+            }
+        });
+
+        return;
         //log.warn("getMessagePerUserTimeline desactivated");
         //return -1;
-        if (this.messagePerUserTimeline !== null) return this.messagePerUserTimeline;
-        var allNames = this.getEnumName();
-        var hours = DatetimePicker.prototype.oneHour();
-        var numberMessagePerUser;
-        var messagePerUserTimeline = {
-            total: []
-        };
-        var total = 0;
-
-        //desactivation des logs
-        log.setLevel(log.levels.DEBUG);
-
-        var name;
-        var nbMessage;
-        var ref = this.ref;
-        while (true) {
-            //this.betweenHours = hours;
-            total = 0;
-
-            //delete this.numberMessagePerUser;
-            //this.numberMessagePerUser = null; //force recalcul
-            //numberMessagePerUser = this.getNumberMessagePerUser({
-            //    toSort: false,
-            //    refetch: true
-            //});
-
-
-            for (var i = 0; i < this.enumName.length; i++) {
-                //_.each(this.enumName, function (name) {
-                name = this.enumName[i];
-                if (typeof messagePerUserTimeline[name] !== "object") {
-                    messagePerUserTimeline[name] = [];
-                }
-                //pas de gain de temps....
-                nbMessage = Data.find({
-                    $and: [{
-                        userName: name
-                    }, {
-                        reference: ref
-                    },
-                        //betweenDate,
-                        hours
-                    ]
-                }).fetch().length;
-                messagePerUserTimeline[name].push(nbMessage || 0);
-
-                //messagePerUserTimeline[name].push(numberMessagePerUser[name] || 0);
-                total += parseInt(nbMessage || 0);
-            }
-            messagePerUserTimeline.total.push(total);
-            log.debug("getMessagePerUserTimeline ", hours["hours.ISO"].$gte.getHours() + "h to " + hours["hours.ISO"].$lt.getHours() + 1 + "h", "total", total);
-            if (hours["hours.ISO"].$gte.getHours() >= 23) {
-                break;
-            }
-            hours = DatetimePicker.prototype.nextHour(hours);
-        }
-
-        //reactivation des logs
-        log.setLevel(log.levels.TRACE);
-
-        if (typeof callback === "function") {
-            callback.call(this);
-        }
-
-        this.messagePerUserTimeline = messagePerUserTimeline;
-        return messagePerUserTimeline;
+        //if (this.messagePerUserTimeline !== null) return this.messagePerUserTimeline;
+        //var allNames = this.getEnumName();
+        //var hours = DatetimePicker.prototype.oneHour();
+        //var numberMessagePerUser;
+        //var messagePerUserTimeline = {
+        //    total: []
+        //};
+        //var total = 0;
+        //
+        ////desactivation des logs
+        //log.setLevel(log.levels.DEBUG);
+        //
+        //var name;
+        //var nbMessage;
+        //var ref = this.ref;
+        //while (true) {
+        //    //this.betweenHours = hours;
+        //    total = 0;
+        //
+        //    //delete this.numberMessagePerUser;
+        //    //this.numberMessagePerUser = null; //force recalcul
+        //    //numberMessagePerUser = this.getNumberMessagePerUser({
+        //    //    toSort: false,
+        //    //    refetch: true
+        //    //});
+        //
+        //
+        //    for (var i = 0; i < this.enumName.length; i++) {
+        //        //_.each(this.enumName, function (name) {
+        //        name = this.enumName[i];
+        //        if (typeof messagePerUserTimeline[name] !== "object") {
+        //            messagePerUserTimeline[name] = [];
+        //        }
+        //        //pas de gain de temps....
+        //        nbMessage = Data.find({
+        //            $and: [{
+        //                userName: name
+        //            }, {
+        //                reference: ref
+        //            },
+        //                //betweenDate,
+        //                hours
+        //            ]
+        //        }).fetch().length;
+        //        messagePerUserTimeline[name].push(nbMessage || 0);
+        //
+        //        //messagePerUserTimeline[name].push(numberMessagePerUser[name] || 0);
+        //        total += parseInt(nbMessage || 0);
+        //    }
+        //    messagePerUserTimeline.total.push(total);
+        //    log.debug("getMessagePerUserTimeline ", hours["hours.ISO"].$gte.getHours() + "h to " + hours["hours.ISO"].$lt.getHours() + 1 + "h", "total", total);
+        //    if (hours["hours.ISO"].$gte.getHours() >= 23) {
+        //        break;
+        //    }
+        //    hours = DatetimePicker.prototype.nextHour(hours);
+        //}
+        //
+        ////reactivation des logs
+        //log.setLevel(log.levels.TRACE);
+        //
+        //if (typeof callback === "function") {
+        //    callback.call(this);
+        //}
+        //
+        //this.messagePerUserTimeline = messagePerUserTimeline;
+        //return messagePerUserTimeline;
     };
 
     /**
@@ -582,6 +640,7 @@ function _StatistiqueService(options) {
 
 
 
+
     this.setAll = function (callback) {
         //this.read();
         //log.info("StatistiqueService.setAll : starting ...")
@@ -590,6 +649,8 @@ function _StatistiqueService(options) {
         this.getContentStatAndPostCountByUser();
 
         this.getProportionMessageAndContent();
+
+       this.getMessagePerUserTimeline();
 
         //this.getEnumName();
         //this.getNumberMessagePerUser();
@@ -820,7 +881,13 @@ StatistiqueService = function (options) {
             //we need to remove previous conversationName
             options.url = options.url.split("?conversationName=")[0];
         }
-        options.url += "?conversationName="+conversationName;
+        var op;
+        if(options.url.indexOf("?") === -1){
+            op = "?";
+        } else {
+            op = "&";
+        }
+        options.url += op+"conversationName="+conversationName;
     });
 
 

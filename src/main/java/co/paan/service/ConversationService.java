@@ -29,4 +29,6 @@ public interface ConversationService {
     Map<String,Long> getPostCountPerUserBetweenDate(String conversationName, String startDate, String endDate);
 
     Map<Integer, Map<String, Long>> getPostCountPerUserPerMonth(String conversationName, String year);
+
+    Map<String, Map<Integer, Long>> getPostCountPerMonthPerUser(String conversationName, String year);
 }

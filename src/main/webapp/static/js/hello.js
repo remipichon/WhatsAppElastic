@@ -25,6 +25,8 @@ $(document).ready(function() {
     ModalControler.prototype.initModal();
 
 
+    highchartsService = new HighchartsService();
+
 
 
     //don't why I have to do this
