@@ -180,9 +180,9 @@ HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique)
         });
     });
 
-    var month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
+    var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
     for (var i = 1; i <= 12; i++) {
-        categories.push(month[i-1])
+        categories.push(month[i - 1])
     }
 
     $('#user-bar-chart-timeline').highcharts({
@@ -230,52 +230,45 @@ HighchartsService.prototype.drawHighcharts = function (statistique) {
 }
 
 
-HighchartsService.prototype.initDrawHighcharts = function () {
-    delete statistique;
-    statistique = new StatistiqueService({
-        conversationName: "sample_newFormat" //TODO
-        //calculAll: true //to get and draw //TODO rename attribute to offer : getAll, getAll+drawAll
-    });
+HighchartsService.prototype.initDrawHighcharts = function (statGiven) {
+    //delete statistique;
+    //if (statGiven != null) {
+    //    statisique = statGiven;
+    //} else {
+        //TODO DateTimePicker
+        //var endDate = datetimepicker.findOne({
+        //    type: "endDate"
+        //}).date;
+        //var startDate = datetimepicker.findOne({
+        //    type: "startDate"
+        //}).date;
+        //statistique.betweenDate = {
+        //    "date.ISO": {
+        //        $gte: startDate,
+        //        $lt: endDate
+        //    }
+        //};
+        //
+        //var endHours = datetimepicker.findOne({
+        //    type: "endHours"
+        //}).hours;
+        //var startHours = datetimepicker.findOne({
+        //    type: "startHours"
+        //}).hours;
+        //statistique.betweenHours = {
+        //    "hours.ISO": {
+        //        $gte: startHours,
+        //        $lt: endHours
+        //    }
+        //};
 
-    //TODO DateTimePicker and conversationName
-    //statistique = new StatistiqueService({
-    //    calculAll:false,
-    //    ref: Conversation.findOne().name
-    //});
-    //
-    //var endDate = datetimepicker.findOne({
-    //    type: "endDate"
-    //}).date;
-    //var startDate = datetimepicker.findOne({
-    //    type: "startDate"
-    //}).date;
-    //statistique.betweenDate = {
-    //    "date.ISO": {
-    //        $gte: startDate,
-    //        $lt: endDate
-    //    }
-    //};
-    //
-    //var endHours = datetimepicker.findOne({
-    //    type: "endHours"
-    //}).hours;
-    //var startHours = datetimepicker.findOne({
-    //    type: "startHours"
-    //}).hours;
-    //statistique.betweenHours = {
-    //    "hours.ISO": {
-    //        $gte: startHours,
-    //        $lt: endHours
-    //    }
-    //};
+        //TODO add dates
+        statistique = new StatistiqueService({
+            conversationName: "sample_newFormat", //TODO get from method params
+            setAll: true
+        });
 
-    //TODO
-    //statistique.setAll();
-    //log.info("HighchartsService.initDrawHighcharts statistique", statistique);
-    //HighchartsService.prototype.drawHighcharts(statistique);
-
-
-    //statistique.getAll(HighchartsService.prototype.drawHighcharts);
+    //}
 
 
 }

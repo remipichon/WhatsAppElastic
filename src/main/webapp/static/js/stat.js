@@ -272,7 +272,7 @@ function _StatistiqueService(options) {
 
 
     this.setAll = function (callback) {
-        this.getContentStatAndPostCountByUser();
+       this.getContentStatAndPostCountByUser();
 
         this.getProportionMessageAndContent();
 
@@ -296,6 +296,10 @@ function _StatistiqueService(options) {
         delete attr.betweenHours;
         return attr;
     };
+
+    this.getJsonData = function(){
+        return JSON.stringify(this.getAttributes());
+    }
 
 
 }
@@ -339,8 +343,8 @@ StatistiqueService = function (options) {
             })(statistique, property);
         }
     }
-    
-    statistique.setAll();
+
+    if(options.setAll) statistique.setAll();
 
     return statistique;
 };
