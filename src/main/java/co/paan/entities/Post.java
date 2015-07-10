@@ -1,12 +1,7 @@
 package co.paan.entities;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldIndex;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import java.util.List;
+import org.springframework.data.elasticsearch.annotations.*;
 
 /**
  * Created by hungnguyen on 12/28/14.
@@ -22,6 +17,26 @@ public class Post {
     private String content;
     private String conversationName;
     private int contentLength;
+
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "YYYY-MM-dd")
+    private String date;
+    private String hour;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getHour() {
+        return hour;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
 
     public int getContentLength() {
         return contentLength;

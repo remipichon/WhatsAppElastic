@@ -5,13 +5,21 @@ import co.paan.rest.DTO.ParseFileResponseDTO;
 import co.paan.service.ParseFileService;
 import co.paan.service.PostService;
 import com.google.common.io.CharStreams;
+import org.elasticsearch.bootstrap.Elasticsearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by remi on 04/07/15.
@@ -35,7 +43,7 @@ public class ParseFileServiceImpl implements ParseFileService {
         String path = classLoader.getResource(fileName).getPath();
 
         try {
-            lineCount = countLines(path);
+            lineCount = countLines(path)+1;
         } catch (IOException e) {
             e.printStackTrace(); //TODO capter ca dans le controleur d'error
         }
@@ -79,18 +87,25 @@ public class ParseFileServiceImpl implements ParseFileService {
     }
 
 
+   // 21/06/2015, 14:23 - Amandine Moulin: Moi aussi j'suis : - nue 😁
     private Boolean processLine(String line, String conversationName) {
 
-        String[] split = line.split("-");
-        if (split.length != 2) return false;
-        String[] split2 = split[1].split(":");
 
-        if (split2.length != 2) return false;
+        String regex =  "(\\d{2}\\/\\d{2}\\/\\d{4})[,]\\s(\\d(?:\\d)?:\\d{2} )-\\s([^:]*):(.*?)(?=\\s*\\d{2}\\/|$)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(line);
+
+        if(!matcher.find() ) return false;
 
         Post post = new Post();
-        post.setAuthor(split2[0]);
-        post.setContent(split2[1]);
+        post.setAuthor(matcher.group(3));
+        post.setContent(matcher.group(4));
         post.setConversationName(conversationName);
+
+        String dateStr = matcher.group(1);
+        String hourStr = matcher.group(2); //TODO hour
+        //from dd/MM/YYYY to YYYY-MM-dd
+        post.setDate(dateStr.substring(6,10)+"-"+ dateStr.substring(3,5)+"-"+dateStr.substring(0,2));
 
         postService.save(post);
 
