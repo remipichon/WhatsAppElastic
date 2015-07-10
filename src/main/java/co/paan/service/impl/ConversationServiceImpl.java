@@ -6,10 +6,15 @@ import co.paan.repository.PostRepository;
 import co.paan.rest.DTO.Author;
 import co.paan.service.ConversationService;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.InternalAggregation;
+import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.stats.InternalStats;
 import org.slf4j.Logger;
@@ -21,6 +26,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -100,13 +106,12 @@ public class ConversationServiceImpl implements ConversationService {
         Aggregation contentStats;
 
 
-
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchQuery("conversationName", conversationName))
                 .withIndices("conversation").withTypes("posts")
                 .addAggregation(AggregationBuilders.terms("postCount").field("author")
                         .subAggregation(AggregationBuilders.stats("content_stats").field("contentLength")))
-                        .build();
+                .build();
         Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
             @Override
             public Aggregations extract(SearchResponse response) {
@@ -125,11 +130,11 @@ public class ConversationServiceImpl implements ConversationService {
             float avg = (float) ((InternalStats) contentStats).getAvg();
             float sum = (float) ((InternalStats) contentStats).getSum();
             stat = new HashMap<>();
-            stat.put("post_count",count);
-            stat.put("content_max",max);
-            stat.put("content_avg",avg);
-            stat.put("content_sum",sum);
-            result.put(author,stat);
+            stat.put("post_count", count);
+            stat.put("content_max", max);
+            stat.put("content_avg", avg);
+            stat.put("content_sum", sum);
+            result.put(author, stat);
         }
 
         return result;
@@ -144,9 +149,8 @@ public class ConversationServiceImpl implements ConversationService {
     public Double getTotalContent(String conversationName) {
 
 
-
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.matchPhraseQuery("conversationName",conversationName))
+                .withQuery(QueryBuilders.matchPhraseQuery("conversationName", conversationName))
                 .withIndices("conversation").withTypes("posts")
                 .addAggregation(AggregationBuilders.stats("content_stats").field("contentLength"))
                 .build();
@@ -167,7 +171,6 @@ public class ConversationServiceImpl implements ConversationService {
         Map<String, Double> proportion;
 
 
-
         Map<String, Map<String, Float>> contentStatAndPostCountByUser = this.getContentStatAndPostCountByUser(conversationName);
 
         Integer totalMessage = this.getTotalMessage(conversationName);
@@ -179,9 +182,9 @@ public class ConversationServiceImpl implements ConversationService {
             Float post_count = stats.get("post_count");
             Float content_sum = stats.get("content_sum");
             proportion = new HashMap<>();
-            proportion.put("post_proportion", post_count.doubleValue()/totalMessage);
-            proportion.put("content_proportion", content_sum/totalContent);
-            result.put(author,proportion);
+            proportion.put("post_proportion", post_count.doubleValue() / totalMessage);
+            proportion.put("content_proportion", content_sum / totalContent);
+            result.put(author, proportion);
 
         }
 
@@ -215,4 +218,37 @@ public class ConversationServiceImpl implements ConversationService {
     public Map<String, Map<Integer, Integer>> getPostCountPerUserPerHour(String conversationName) {
         return null;
     }
+
+    @Override
+    public Map<String, Long> getPostCountPerUserBetweenDate(String conversationName, String startDate, String endDate) {
+        Map<String, Long> result = new HashMap<>();
+        String author;
+        Long count;
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchQuery("conversationName", conversationName))
+                .withIndices("conversation").withTypes("posts")
+                .addAggregation(AggregationBuilders.filter("between_date").filter(FilterBuilders.rangeFilter("date").gte(startDate).lte(endDate))
+                        .subAggregation(AggregationBuilders.terms("group_by_author").field("author")))
+                .build();
+        Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
+            @Override
+            public Aggregations extract(SearchResponse response) {
+                return response.getAggregations();
+            }
+        });
+
+        InternalFilter internalFilter = aggregations.get("between_date");
+        Aggregation aggregation = internalFilter.getAggregations().get("group_by_author");
+        Collection<Terms.Bucket> buckets = ((StringTerms) aggregation).getBuckets();
+        for (Terms.Bucket bucket : buckets) {
+            author = bucket.getKey();
+            count = bucket.getDocCount();
+            result.put(author, count);
+        }
+        result.put("total", internalFilter.getDocCount());
+
+        return result;
+    }
+
 }
