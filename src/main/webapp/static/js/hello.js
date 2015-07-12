@@ -23,6 +23,16 @@ $(document).ready(function () {
     DatetimePickerService.prototype.initDatePicker();
     DatetimePickerService.prototype.initTimePicker();
     $("#draw-button").on("click", HighchartsService.prototype.initDrawHighcharts);
+    $("#month-select > button").on("click",function(event){
+        $(this).parent().children().each(function(child){
+            $(this).removeClass("btn-info");
+            $(this).addClass("btn-default");
+        });
+        $(this).addClass("btn-info");
+        $(this).removeClass("btn-default");
+        statistique.messagePerUserTimelineMonth = null;
+        statistique.getMessagePerUserTimelineMonth({month : $(this).index()+1});
+    });
 
     ModalControler.prototype.initModal();
 

@@ -273,9 +273,16 @@ function _StatistiqueService(options) {
     this.getMessagePerUserTimelineMonth = function (callback) {
         if (this.messagePerUserTimelineMonth != null) return this.messagePerUserTimelineMonth;
 
+
+        var month = 1;
+        if (typeof callback === "object")
+            if (typeof callback.month !== "undefined")
+                month = callback.month;
+
+
         var self = this;
         $.ajax({
-            url: '/api/stats/postCountPerDayPerUser?year=2015&month=5',
+            url: '/api/stats/postCountPerDayPerUser?year=2015&month='+month,
             type: 'GET',
             async: true,
             dataType: "json",
@@ -295,6 +302,10 @@ function _StatistiqueService(options) {
                  ]
                  }
                  */
+                if(_.isEmpty(data)){
+                    //TODO afficher un feedback
+                    log.info("month "+month+" doesn't have any record");
+                }
                 _.each(data, function (dayCount, author) {
                     var arrayDay = [];
                     for (var i = 0; i < 28; i++) {
@@ -317,7 +328,7 @@ function _StatistiqueService(options) {
 
 
     this.setAll = function (callback) {
-       this.getContentStatAndPostCountByUser();
+        this.getContentStatAndPostCountByUser();
 
         this.getProportionMessageAndContent();
 
@@ -344,7 +355,7 @@ function _StatistiqueService(options) {
         return attr;
     };
 
-    this.getJsonData = function(){
+    this.getJsonData = function () {
         return JSON.stringify(this.getAttributes());
     }
 
@@ -391,7 +402,7 @@ StatistiqueService = function (options) {
         }
     }
 
-    if(options.setAll) statistique.setAll();
+    if (options.setAll) statistique.setAll();
 
     return statistique;
 };
