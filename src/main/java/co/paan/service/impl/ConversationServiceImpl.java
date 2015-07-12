@@ -75,7 +75,7 @@ public class ConversationServiceImpl implements ConversationService {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchQuery("conversationName", conversationName))
                 .withIndices("conversation").withTypes("posts")
-                .addAggregation(AggregationBuilders.terms("getPostCountByAthors").field("author"))
+                .addAggregation(AggregationBuilders.terms("getPostCountByAthors").field("author").size(0))
                 .build();
         Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
             @Override
@@ -226,7 +226,7 @@ public class ConversationServiceImpl implements ConversationService {
                 .withQuery(QueryBuilders.matchQuery("conversationName", conversationName))
                 .withIndices("conversation").withTypes("posts")
                 .addAggregation(AggregationBuilders.filter("between_date").filter(FilterBuilders.rangeFilter("date").gte(startDate).lte(endDate))
-                        .subAggregation(AggregationBuilders.terms("group_by_author").field("author")))
+                        .subAggregation(AggregationBuilders.terms("group_by_author").field("author").size(0)))
                 .build();
         Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
             @Override
@@ -243,7 +243,7 @@ public class ConversationServiceImpl implements ConversationService {
             count = bucket.getDocCount();
             result.put(author, count);
         }
-        result.put("total", internalFilter.getDocCount());
+        //result.put("total", internalFilter.getDocCount());
 
         return result;
     }
@@ -283,6 +283,47 @@ public class ConversationServiceImpl implements ConversationService {
                     result.get(author).put(month,count);
                 }
             }
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Map<Integer, Long>> getPostCountPerDayPerUser(String conversationName, String year, Integer month) {
+        Map<String, Map<Integer, Long>> result = new HashMap<>();
+
+        Map<Integer, Map<String, Long>> postCountPerUserPerDay = getPostCountPerUserPerDay(conversationName, year, month);
+
+        for (Map.Entry<Integer, Map<String, Long>> integerMapEntry : postCountPerUserPerDay.entrySet()) {
+            Integer day = integerMapEntry.getKey();
+            Map<String, Long> authorsCount = integerMapEntry.getValue();
+            for (Map.Entry<String, Long> stringLongEntry : authorsCount.entrySet()) {
+                String author = stringLongEntry.getKey();
+                Long count = stringLongEntry.getValue();
+                if(result.get(author) == null){
+                    Map<Integer,Long> monthsCount = new HashMap<>();
+                    monthsCount.put(day,count);
+                    result.put(author,monthsCount);
+                } else{
+                    result.get(author).put(day,count);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<Integer, Map<String, Long>> getPostCountPerUserPerDay(String conversationName, String year, Integer month) {
+        Map<Integer, Map<String, Long>> result = new HashMap<>();
+
+        for (int day = 1; day <= 28; day++) { //TODO day's limit depends on month number
+            String monthStr = (month < 10) ? "0" + month : String.valueOf(month);
+            String dayStr = (day < 10) ? "0" + day : String.valueOf(day);
+            String startDate = year+"-"+monthStr+"-"+dayStr;
+            String endDate = year+"-"+monthStr+"-"+dayStr;
+            Map<String, Long> postCountPerUserBetweenDate = getPostCountPerUserBetweenDate(conversationName, startDate, endDate);
+            result.put(day,postCountPerUserBetweenDate);
         }
 
         return result;

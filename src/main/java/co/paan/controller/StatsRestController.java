@@ -78,4 +78,12 @@ public class StatsRestController {
             @RequestParam(value = "year") String year) {
         return conversationService.getPostCountPerMonthPerUser(conversationName, year);
     }
+
+    @RequestMapping("postCountPerDayPerUser")
+    public Map<String, Map<Integer, Long>> getPostCountPerDayPerUser(
+            @RequestParam(value = "conversationName") String conversationName,
+            @RequestParam(value = "year") String year,
+            @RequestParam(value = "month") Integer month) {
+        return conversationService.getPostCountPerDayPerUser(conversationName, year,month);
+    }
 }

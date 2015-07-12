@@ -216,6 +216,57 @@ HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique)
     });
 }
 
+HighchartsService.prototype.drawMessageBarChartTimelineMonth = function (statistique) {
+    var categories = [];
+
+    var $chart = $('#user-bar-chart-timeline-month');
+    if (typeof $chart.highcharts() !== "undefined") $chart.highcharts().destroy();
+
+    var series = [];
+    var messagePerUserTimelineMonth = statistique.getMessagePerUserTimelineMonth();
+    _.each(messagePerUserTimelineMonth, function (value, name) {
+        series.push({
+            name: name,
+            data: value
+        });
+    });
+
+    var day = ["M", "T", "W", "T","F", "S", "S"];
+    for (var i = 1; i <= 31; i++) {
+        categories.push(i)
+    }
+
+    $('#user-bar-chart-timeline-month').highcharts({
+        title: {
+            text: 'Message per user per day',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: categories
+        },
+        yAxis: {
+            title: {
+                text: 'Nb messages'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: 'messages'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: series
+    });
+}
+
 
 HighchartsService.prototype.drawHighcharts = function (statistique) {
 
@@ -227,6 +278,7 @@ HighchartsService.prototype.drawHighcharts = function (statistique) {
     highchartsService.drawMessageUserPieChart(statistique);
     highchartsService.drawContentUserPieChart(statistique);
     highchartsService.drawMessageBarChartTimeline(statistique);
+    highchartsService.drawMessageBarChartTimelineMonth(statistique);
 }
 
 
@@ -264,7 +316,7 @@ HighchartsService.prototype.initDrawHighcharts = function (statGiven) {
 
         //TODO add dates
         statistique = new StatistiqueService({
-            conversationName: "sample_newFormat", //TODO get from method params
+            conversationName: "spam_18mai_9juillet", //TODO get from method params
             setAll: true
         });
 

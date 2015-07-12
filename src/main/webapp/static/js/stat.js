@@ -270,6 +270,51 @@ function _StatistiqueService(options) {
         return;
     };
 
+    this.getMessagePerUserTimelineMonth = function (callback) {
+        if (this.messagePerUserTimelineMonth != null) return this.messagePerUserTimelineMonth;
+
+        var self = this;
+        $.ajax({
+            url: '/api/stats/postCountPerDayPerUser?year=2015&month=5',
+            type: 'GET',
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var occurences = {};
+                /*
+                 from
+                 {
+                 author : {
+                 dayNb: count,...
+                 }
+                 }
+                 to
+                 {
+                 author: [
+                 countDay0, countDay1,... //avec du padding s'il faut
+                 ]
+                 }
+                 */
+                _.each(data, function (dayCount, author) {
+                    var arrayDay = [];
+                    for (var i = 0; i < 28; i++) {
+                        var count = dayCount[i + 1]; //backend give month in range [1,31] Highcarts needs [0,30]
+                        arrayDay.push((count != null) ? count : 0);
+                    }
+                    occurences[author] = arrayDay;
+                });
+
+                self.messagePerUserTimelineMonth = occurences;
+                highchartsService.drawMessageBarChartTimelineMonth(statistique);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                self.messagePerUserTimelineMonth = errorThrown;
+            }
+        });
+        return;
+    };
+
 
     this.setAll = function (callback) {
        this.getContentStatAndPostCountByUser();
@@ -277,6 +322,8 @@ function _StatistiqueService(options) {
         this.getProportionMessageAndContent();
 
         this.getMessagePerUserTimeline();
+
+        this.getMessagePerUserTimelineMonth();
     }
 
     /**

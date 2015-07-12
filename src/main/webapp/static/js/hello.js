@@ -9,7 +9,7 @@ angular.module('hello', [])
     });
 
 
-local = true;
+local = false;
 
 
 $(document).ready(function () {
@@ -47,6 +47,8 @@ $(document).ready(function () {
             statistique.statNumberMessagePerUser = allData.statNumberMessagePerUser;
 
             statistique.messagePerUserTimeline = allData.messagePerUserTimeline;
+
+            statistique.messagePerUserTimelineMonth = allData.messagePerUserTimelineMonth;
 
             highchartsService.drawHighcharts(statistique);
 
