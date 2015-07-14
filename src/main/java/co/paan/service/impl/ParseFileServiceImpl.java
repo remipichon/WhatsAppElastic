@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * Created by remi on 04/07/15.
  */
-@Service 
+@Service
 public class ParseFileServiceImpl implements ParseFileService {
 
     private static final Logger logger = LoggerFactory.getLogger(ParseFileServiceImpl.class);
@@ -54,11 +54,17 @@ public class ParseFileServiceImpl implements ParseFileService {
             e.printStackTrace(); //TODO capter ca dans le controleur d'error
         }
 
+        int feedbackStep = lineCount/100;
+        int lineRead = 0;
         try (Scanner scanner = new Scanner(file)) {
             logger.info("Start reading " + lineCount + " lines of file with path", file.getAbsolutePath());
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
+                lineRead++;
                 postCount += (processLine(line, conversationName)) ? 1 : 0;
+                if(postCount%feedbackStep == 0){
+                    logger.info("Read "+lineRead+" of "+lineCount);
+                }
             }
             scanner.close();
 
