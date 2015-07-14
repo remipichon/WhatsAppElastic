@@ -1,6 +1,9 @@
 package co.paan.service.impl;
 
+import co.paan.entities.Conversation;
 import co.paan.entities.Post;
+import co.paan.repository.ConversationCrudRepository;
+import co.paan.repository.ConversationRepository;
 import co.paan.repository.PostCRUDRepository;
 import co.paan.repository.PostRepository;
 import co.paan.rest.DTO.Author;
@@ -37,6 +40,12 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Autowired
     PostRepository postRepository;
+
+    @Autowired
+    ConversationRepository conversationRepository;
+
+    @Autowired
+    ConversationCrudRepository conversationCrudRepository;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -254,10 +263,10 @@ public class ConversationServiceImpl implements ConversationService {
 
         for (int month = 1; month <= 12; month++) {
             String monthStr = (month < 10) ? "0" + month : String.valueOf(month);
-            String startDate = year+"-"+monthStr+"-"+"01";
-            String endDate = year+"-"+monthStr+"-"+"25";
+            String startDate = year + "-" + monthStr + "-" + "01";
+            String endDate = year + "-" + monthStr + "-" + "25";
             Map<String, Long> postCountPerUserBetweenDate = getPostCountPerUserBetweenDate(conversationName, startDate, endDate);
-            result.put(month,postCountPerUserBetweenDate);
+            result.put(month, postCountPerUserBetweenDate);
         }
 
         return result;
@@ -275,16 +284,15 @@ public class ConversationServiceImpl implements ConversationService {
             for (Map.Entry<String, Long> stringLongEntry : authorsCount.entrySet()) {
                 String author = stringLongEntry.getKey();
                 Long count = stringLongEntry.getValue();
-                if(result.get(author) == null){
-                    Map<Integer,Long> monthsCount = new HashMap<>();
-                    monthsCount.put(month,count);
-                    result.put(author,monthsCount);
-                } else{
-                    result.get(author).put(month,count);
+                if (result.get(author) == null) {
+                    Map<Integer, Long> monthsCount = new HashMap<>();
+                    monthsCount.put(month, count);
+                    result.put(author, monthsCount);
+                } else {
+                    result.get(author).put(month, count);
                 }
             }
         }
-
         return result;
     }
 
@@ -300,16 +308,15 @@ public class ConversationServiceImpl implements ConversationService {
             for (Map.Entry<String, Long> stringLongEntry : authorsCount.entrySet()) {
                 String author = stringLongEntry.getKey();
                 Long count = stringLongEntry.getValue();
-                if(result.get(author) == null){
-                    Map<Integer,Long> monthsCount = new HashMap<>();
-                    monthsCount.put(day,count);
-                    result.put(author,monthsCount);
-                } else{
-                    result.get(author).put(day,count);
+                if (result.get(author) == null) {
+                    Map<Integer, Long> monthsCount = new HashMap<>();
+                    monthsCount.put(day, count);
+                    result.put(author, monthsCount);
+                } else {
+                    result.get(author).put(day, count);
                 }
             }
         }
-
         return result;
     }
 
@@ -320,12 +327,32 @@ public class ConversationServiceImpl implements ConversationService {
         for (int day = 1; day <= 28; day++) { //TODO day's limit depends on month number
             String monthStr = (month < 10) ? "0" + month : String.valueOf(month);
             String dayStr = (day < 10) ? "0" + day : String.valueOf(day);
-            String startDate = year+"-"+monthStr+"-"+dayStr;
-            String endDate = year+"-"+monthStr+"-"+dayStr;
+            String startDate = year + "-" + monthStr + "-" + dayStr;
+            String endDate = year + "-" + monthStr + "-" + dayStr;
             Map<String, Long> postCountPerUserBetweenDate = getPostCountPerUserBetweenDate(conversationName, startDate, endDate);
-            result.put(day,postCountPerUserBetweenDate);
+            result.put(day, postCountPerUserBetweenDate);
         }
 
         return result;
+    }
+
+    @Override
+    public ArrayList<Conversation> getExistingConversationName() { //TODO penible de devoir faire ca, investiguer pour pouvoir retoutner direcrement le resultat
+        ArrayList<Conversation> result = new ArrayList<>();
+        Iterable<Conversation> all = conversationRepository.findAll();
+        for (Conversation conversation : all) {
+            result.add(conversation);
+        }
+        return result;
+    }
+
+    @Override
+    public Conversation create(String conversationName, int postCount) {
+        return conversationRepository.save(new Conversation(conversationName, new Date(), postCount));
+    }
+
+    @Override
+    public boolean isNameAvailable(String conversationName) {
+        return conversationCrudRepository.findByName(conversationName).isEmpty(); //TODO il y a certainement bien mieux à faire
     }
 }

@@ -1,20 +1,25 @@
 package co.paan.controller;
 
+import co.paan.entities.Conversation;
 import co.paan.entities.Post;
 import co.paan.rest.DTO.Author;
 import co.paan.rest.DTO.ParseFileResponseDTO;
 import co.paan.service.impl.ConversationServiceImpl;
 import co.paan.service.impl.ParseFileServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created by remi on 04/07/15.
@@ -23,6 +28,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/conversation")
 public class ConversationRestController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ParseFileServiceImpl.class);
+
 
     @Autowired
     ParseFileServiceImpl fileService;
@@ -35,10 +43,43 @@ public class ConversationRestController {
 
 
     @RequestMapping("parsefile")
-    public @ResponseBody
+    public @ResponseBody //TODO DEV ONLY
     ParseFileResponseDTO parseFile(@RequestParam(value = "conversationName") String conversationName,
                                           @RequestParam(value = "filename") String fileName) {
         return fileService.parseFile(fileName,conversationName);
+    }
+
+
+    @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
+    public
+    @ResponseBody //TODO change response !
+    String handleFileUpload(@RequestParam("conversationName") String conversationName,
+                            @RequestParam("file") MultipartFile file) {
+
+        if(conversationService.isNameAvailable(conversationName)) {
+
+            if (!file.isEmpty()) {
+                try {
+                    byte[] bytes = file.getBytes();
+                    BufferedOutputStream stream =
+                            new BufferedOutputStream(new FileOutputStream(new File("build/resources/main/"+conversationName)));
+                    stream.write(bytes);
+                    stream.close();
+
+
+                    ParseFileResponseDTO parseFileResponseDTO = fileService.parseFile(conversationName, conversationName);
+
+                    return "You successfully uploaded " + conversationName + " and parsed it with "+parseFileResponseDTO.getLineCount()+" "+parseFileResponseDTO.getPostCount();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "You failed to upload " + conversationName + " => " + e.getMessage();
+                }
+            } else {
+                return "You failed to upload " + conversationName + " because the file was empty.";
+            }
+        } else {
+            return "File not parsed as the conversation name "+conversationName+"is already used.";
+        }
     }
 
 
@@ -53,9 +94,9 @@ public class ConversationRestController {
     }
 
 
-    @RequestMapping("getauthors")
-    public ArrayList<Author> getConversationParticipants(@RequestParam(value = "conversationName") String conversationName) {
-        return conversationService.getAuthorsByConversationName(conversationName);
+    @RequestMapping("getExistingConversationName")
+    public ArrayList<Conversation> getExistingConversationName(){
+        return conversationService.getExistingConversationName();
     }
 
 

@@ -197,34 +197,35 @@ ConversationHelper.prototype.create = function (name, userList, minDate, maxDate
  * @param  {string} conversationName
  */
 ConversationHelper.prototype.getConversationDataStatistique = function (conversationName,getDataSub, prematureSub, callback) {
-    if (typeof prematureSub === "function") callback = prematureSub;
-    else if (typeof prematureSub !== "boolean") prematureSub = false;
-
-    Meteor.call("getConversation", conversationName, null /*Meteor.userId()*/, prematureSub, function (error, result) {
-        if (typeof error !== "undefined") {
-            log.error("getConversationDataStatistique : get error ", error);
-            return;
-        }
-
-        //arret des precedentes ubscriptions si existante
-        if (DataSubscription !== null)
-            DataSubscription.stop();
-        if (StatistiqueSubscription !== null)
-            StatistiqueSubscription.stop();
-        if (ConversationSubscription !== null)
-            ConversationSubscription.stop();
-
-        //nouvelles sub
-        if(getDataSub)
-            DataSubscription = Meteor.subscribe("data_" + conversationName);
-        StatistiqueSubscription = Meteor.subscribe("statistique_" + conversationName);
-        ConversationSubscription = Meteor.subscribe("conversation_" + conversationName);
-
-        log.info("getConversationDataStatistique ", result, ": done with subscribes");
-        if (typeof callback === "function") callback();
-
-
-    });
+    $("#filename h3").html(conversationName);
+    //if (typeof prematureSub === "function") callback = prematureSub;
+    //else if (typeof prematureSub !== "boolean") prematureSub = false;
+    //
+    //Meteor.call("getConversation", conversationName, null /*Meteor.userId()*/, prematureSub, function (error, result) {
+    //    if (typeof error !== "undefined") {
+    //        log.error("getConversationDataStatistique : get error ", error);
+    //        return;
+    //    }
+    //
+    //    //arret des precedentes ubscriptions si existante
+    //    if (DataSubscription !== null)
+    //        DataSubscription.stop();
+    //    if (StatistiqueSubscription !== null)
+    //        StatistiqueSubscription.stop();
+    //    if (ConversationSubscription !== null)
+    //        ConversationSubscription.stop();
+    //
+    //    //nouvelles sub
+    //    if(getDataSub)
+    //        DataSubscription = Meteor.subscribe("data_" + conversationName);
+    //    StatistiqueSubscription = Meteor.subscribe("statistique_" + conversationName);
+    //    ConversationSubscription = Meteor.subscribe("conversation_" + conversationName);
+    //
+    //    log.info("getConversationDataStatistique ", result, ": done with subscribes");
+    //    if (typeof callback === "function") callback();
+    //
+    //
+    //});
 }
 
 

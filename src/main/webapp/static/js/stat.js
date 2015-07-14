@@ -367,6 +367,10 @@ StatistiqueService = function (options) {
     var conversationName = options.conversationName;
     //add/replace conversationName to all request
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        if(options.url.indexOf("api/conversation") !== -1){
+            return;
+        }
+
         if (options.url.indexOf('?conversationName=') !== -1) {
             //we need to remove previous conversationName
             options.url = options.url.split("?conversationName=")[0];

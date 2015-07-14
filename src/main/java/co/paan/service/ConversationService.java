@@ -1,5 +1,6 @@
 package co.paan.service;
 
+import co.paan.entities.Conversation;
 import co.paan.rest.DTO.Author;
 
 import java.util.ArrayList;
@@ -35,4 +36,10 @@ public interface ConversationService {
     Map<String, Map<Integer, Long>> getPostCountPerDayPerUser(String conversationName, String year, Integer month);
 
     Map<Integer, Map<String, Long>> getPostCountPerUserPerDay(String conversationName, String year, Integer month);
+
+    ArrayList<Conversation> getExistingConversationName();
+
+    Conversation create(String conversationName, int postCount);
+
+    boolean isNameAvailable(String conversationName);
 }

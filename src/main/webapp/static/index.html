@@ -15,16 +15,6 @@
 </head>
 
 <body ng-app="hello">
-<!--<div class="container">-->
-<!--<h1>Greeting KKK</h1>-->
-
-<!--<div ng-controller="home" ng-cloak class="ng-cloak">-->
-<!--<p>The ID is {{greeting.id}}</p>-->
-
-<!--<p>The content is {{greeting.content}}</p>-->
-<!--</div>-->
-<!--</div>-->
-
 <div name="modalFile">
     <div id="modal-file" class="modal fade container" data-keyboard="false" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel" aria-hidden="true">
@@ -46,8 +36,6 @@
                                             conversation</label>
                                         <input type="text" class="form-control" id="conversation-name"
                                                placeHolder="Enter an existing conversation name">
-                                        <input type="checkbox" name="getDataSub" value="false" id="getDataSub"> get data
-                                        sub
                                         <span class="sucess-icon glyphicon glyphicon-ok form-control-feedback"></span>
                                         <span class="error-icon glyphicon glyphicon-ban-circle form-control-feedback"></span>
 
@@ -119,7 +107,7 @@
                 <div class="row">
                     <div id="filename" class="text-center col-md-12"
                          data-toggle="modal" data-target="#modal-file">
-                        <h3>ConversationName : {{getCurrentConversationName}}</h3></div>
+                        <h3>Upload or load a conversation</h3></div>
                 </div>
             </div>
             <div class="clearfix visible-xs-block visible-sm-block"></div>
