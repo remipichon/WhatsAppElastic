@@ -29,6 +29,7 @@ function _StatistiqueService(options) {
     this.statContentMessagePerUser = null;
     this.numberCharacterPerMessagePerUser = null;
     this.messagePerUserTimeline = null;
+    this.messagePerUserTimelineMonth = null;
     this.fetchedRows = null;
 
     this.sorted;

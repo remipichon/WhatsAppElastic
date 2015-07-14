@@ -1,6 +1,9 @@
 //Conversation = new Meteor.Collection("conversation");
 ConversationSubscription = null;
 
+conversationNameStored = null;
+
+
 ConversationHelper = function () {
 }
 
@@ -198,6 +201,7 @@ ConversationHelper.prototype.create = function (name, userList, minDate, maxDate
  */
 ConversationHelper.prototype.getConversationDataStatistique = function (conversationName,getDataSub, prematureSub, callback) {
     $("#filename h3").html(conversationName);
+    conversationNameStored = conversationName;
     //if (typeof prematureSub === "function") callback = prematureSub;
     //else if (typeof prematureSub !== "boolean") prematureSub = false;
     //

@@ -282,45 +282,18 @@ HighchartsService.prototype.drawHighcharts = function (statistique) {
 }
 
 
-HighchartsService.prototype.initDrawHighcharts = function (statGiven) {
-    //delete statistique;
-    //if (statGiven != null) {
-    //    statisique = statGiven;
-    //} else {
-        //TODO DateTimePicker
-        //var endDate = datetimepicker.findOne({
-        //    type: "endDate"
-        //}).date;
-        //var startDate = datetimepicker.findOne({
-        //    type: "startDate"
-        //}).date;
-        //statistique.betweenDate = {
-        //    "date.ISO": {
-        //        $gte: startDate,
-        //        $lt: endDate
-        //    }
-        //};
-        //
-        //var endHours = datetimepicker.findOne({
-        //    type: "endHours"
-        //}).hours;
-        //var startHours = datetimepicker.findOne({
-        //    type: "startHours"
-        //}).hours;
-        //statistique.betweenHours = {
-        //    "hours.ISO": {
-        //        $gte: startHours,
-        //        $lt: endHours
-        //    }
-        //};
+HighchartsService.prototype.initDrawHighcharts = function () {
+
+        if(conversationNameStored == null) {
+            alert("You must first upload or load a conversation");
+            return;
+        }
 
         //TODO add dates
         statistique = new StatistiqueService({
-            conversationName: "spam_18mai_9juillet", //TODO get from method params
+            conversationName: conversationNameStored,
             setAll: true
         });
-
-    //}
 
 
 }
