@@ -89,7 +89,7 @@ ModalControler.prototype.loadFileFromModal = function (event) {
         var conversationName = $("#conversation-name").val();
         log.info("loadFromModal : conversation asked to server");
         $("#modal-file").one("click", ModalControler.prototype.resetModal);
-        ConversationHelper.prototype.getConversationDataStatistique(conversationName);
+        ConversationHelper.prototype.setConversationName(conversationName);
         return;
     }
 
@@ -123,7 +123,7 @@ ModalControler.prototype.loadFileFromModal = function (event) {
 
             $("#modal-file").one("click", ModalControler.prototype.resetModal);
 
-            ConversationHelper.prototype.getConversationDataStatistique(conversationName);
+            ConversationHelper.prototype.setConversationName(conversationName);
 
         },
         error: function (jqXHR, textStatus, errorThrown) {
