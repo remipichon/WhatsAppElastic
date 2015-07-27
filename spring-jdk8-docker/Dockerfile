@@ -1,4 +1,4 @@
-edFROM java:8
+FROM java:8
 
 # Gradle
 ENV GRADLE_VERSION 2.5
@@ -19,8 +19,9 @@ VOLUME ["~/.gradle/caches"]
 #il faut soit chach les depencies du project, soit les embarquer dans l'image (je vais prendre cette option)
 
 
-CMD cd /project && gradle build && java -jar build/libs/spring-data-elasticsearch-sample-1.0.jar 
-#TODO pas ouf de devoir demarrer le .jar avec ce nom la, comment a fait Guillaume ?
+CMD cd /project && gradle build && java -Dserver.port=8082 -jar build/libs/spring-boot-wae-0.1.0.jar
+
+
 
 # create image
 #docker build -t kiki/spring-jdk8 .
