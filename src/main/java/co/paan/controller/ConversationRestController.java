@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -42,12 +43,12 @@ public class ConversationRestController {
     ConversationServiceImpl conversationService;
 
 
-    @RequestMapping("parsefile")
-    public @ResponseBody //TODO DEV ONLY
-    ParseFileResponseDTO parseFile(@RequestParam(value = "conversationName") String conversationName,
-                                          @RequestParam(value = "filename") String fileName) {
-        return fileService.parseFile(fileName,conversationName);
-    }
+//    @RequestMapping("parsefile")
+//    public @ResponseBody //TODO DEV ONLY
+//    ParseFileResponseDTO parseFile(@RequestParam(value = "conversationName") String conversationName,
+//                                          @RequestParam(value = "filename") String fileName) {
+//        return fileService.parseFile(fileName,conversationName);
+//    }
 
 
     @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
@@ -60,14 +61,16 @@ public class ConversationRestController {
 
             if (!file.isEmpty()) {
                 try {
-                    byte[] bytes = file.getBytes();
-                    BufferedOutputStream stream =
-                            new BufferedOutputStream(new FileOutputStream(new File("build/resources/main/"+conversationName)));
-                    stream.write(bytes);
-                    stream.close();
+//                    byte[] bytes = file.getBytes();
+                    InputStream inputStream = file.getInputStream();
+//
+//                    BufferedOutputStream stream =
+//                            new BufferedOutputStream(new FileOutputStream(new File("/"+conversationName)));
+//                    stream.write(bytes);
+//                    stream.close();
 
 
-                    ParseFileResponseDTO parseFileResponseDTO = fileService.parseFile(conversationName, conversationName);
+                    ParseFileResponseDTO parseFileResponseDTO = fileService.parseFile(inputStream,conversationName, conversationName);
 
                     return "You successfully uploaded " + conversationName + " and parsed it with "+parseFileResponseDTO.getLineCount()+" "+parseFileResponseDTO.getPostCount();
                 } catch (Exception e) {

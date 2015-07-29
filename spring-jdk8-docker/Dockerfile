@@ -19,7 +19,7 @@ VOLUME ["~/.gradle/caches"]
 #il faut soit chach les depencies du project, soit les embarquer dans l'image (je vais prendre cette option)
 
 
-CMD cd /project && gradle build && java -Dserver.port=8082 -jar build/libs/spring-boot-wae-0.1.0.jar
+CMD cd /project && ./gradlew build && java -Dserver.port=80 -jar build/libs/spring-boot-wae-0.1.0.jar
 
 
 

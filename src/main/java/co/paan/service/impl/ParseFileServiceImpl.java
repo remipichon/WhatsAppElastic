@@ -37,42 +37,38 @@ public class ParseFileServiceImpl implements ParseFileService {
     ConversationServiceImpl conversationService;
 
 
-
     @Override
-    public ParseFileResponseDTO parseFile(String fileName, String conversationName) {
+    public ParseFileResponseDTO parseFile(InputStream inputStream, String fileName, String conversationName) {
         //Get file from resources folder
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(fileName).getFile());
+       // ClassLoader classLoader = getClass().getClassLoader();
+//        File file = new File(classLoader.getResource(fileName).getFile());
 
         int postCount = 0;
         int lineCount = 0;
-        String path = classLoader.getResource(fileName).getPath();
+//        String path = classLoader.getResource(fileName).getPath();
 
-        try {
-            lineCount = countLines(path) + 1;
-        } catch (IOException e) {
-            e.printStackTrace(); //TODO capter ca dans le controleur d'error
-        }
+//        try {
+            lineCount = 100;//countLines(path) + 1;
+//        } catch (IOException e) {
+//            e.printStackTrace(); //TODO capter ca dans le controleur d'error
+//        }
 
-        int feedbackStep = lineCount/100;
+        int feedbackStep = lineCount / 100;
         int lineRead = 0;
-        try (Scanner scanner = new Scanner(file)) {
-            logger.info("Start reading " + lineCount + " lines of file with path", file.getAbsolutePath());
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                lineRead++;
-                postCount += (processLine(line, conversationName)) ? 1 : 0;
-                if(postCount%feedbackStep == 0){
-                    logger.info("Read "+lineRead+" of "+lineCount);
-                }
+        Scanner scanner = new Scanner(inputStream);
+        logger.info("Start reading " + lineCount + " lines of file");// with path0;// file.getAbsolutePath());
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            lineRead++;
+            postCount += (processLine(line, conversationName)) ? 1 : 0;
+            if (postCount % feedbackStep == 0) {
+                logger.info("Read " + lineRead + " of " + lineCount);
             }
-            scanner.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        scanner.close();
 
-        logger.info(postCount + " post have been added from " + lineCount + " lines of the file with path " + file.getAbsolutePath());
+
+        logger.info(postCount + " post have been added from " + lineCount + " lines of the file ");//with path " + file.getAbsolutePath());
 
         conversationService.create(conversationName, postCount);
 

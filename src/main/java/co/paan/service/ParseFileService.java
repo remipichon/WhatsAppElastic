@@ -10,6 +10,6 @@ import java.io.InputStream;
  */
 public interface ParseFileService {
 
-    public ParseFileResponseDTO parseFile(String fileName, String conversationName);
 
+    ParseFileResponseDTO parseFile(InputStream inputStream, String fileName, String conversationName);
 }
