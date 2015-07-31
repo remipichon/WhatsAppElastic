@@ -51,6 +51,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-logging:1.2.0.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-web:1.2.0.RELEASE'
     compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile 'org.jboss.logging:jboss-logging:3.3.0.Final'
 }
 
 

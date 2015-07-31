@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 19300, host: 19300
 
   #Forwarding WAE Spring
-  config.vm.network :forwarded_port, guest: 8181, host: 8080
+  config.vm.network :forwarded_port, guest: 8181, host: 8024
 
 
 
@@ -37,14 +37,14 @@ Vagrant.configure("2") do |config|
   #end
   #config.vm.network :forwarded_port, guest: 8080, host: 8989
 
-  config.vm.provision "docker" do |d|
-    #Proxy
-    d.run "proxy",
-    image: "ncarlier/redsocks",
-    args: "--privileged=true --net=host",
-    cmd: "proxy.priv.atos.fr 3128",
-    daemonize: true
-  end
+  #config.vm.provision "docker" do |d|
+  #  #Proxy
+  #  d.run "proxy",
+  #  image: "ncarlier/redsocks",
+  #  args: "--privileged=true --net=host",
+  #  cmd: "proxy.priv.atos.fr 3128",
+  #  daemonize: true
+  #end
 
 
   #Elasticsearch build image
@@ -73,7 +73,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "docker" do |d|
     d.run "WAE",
       image: "kiki/spring-jdk8",
-      args: "-d -p 8181:80 -v /home/docker/.gradle/:/root/.gradle/ -v /project:/project"
+      args: "-d --link ES:ES -p 8181:80 -v /home/docker/.gradle/:/root/.gradle/ -v /project:/project"
   end
 
 end

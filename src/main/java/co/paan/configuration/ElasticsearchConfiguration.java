@@ -4,6 +4,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -23,10 +25,14 @@ import javax.annotation.Resource;
 public class ElasticsearchConfiguration {
     @Resource
     private Environment environment;
+
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchConfiguration.class);
+
     @Bean
     public Client client() {
         TransportClient client = new TransportClient();
         TransportAddress address = new InetSocketTransportAddress(environment.getProperty("elasticsearch.host"), Integer.parseInt(environment.getProperty("elasticsearch.port")));
+        logger.info(" ES ADRESS "+address.toString()+"     "+environment.getProperty("elasticsearch.host"));
         client.addTransportAddress(address);
         return client;
     }

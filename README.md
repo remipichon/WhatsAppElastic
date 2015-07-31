@@ -22,7 +22,17 @@ from /spring-jdk8-docker : docker build -t kiki/elasticsearch-marvel .
 
 
 
+With Vagrant
+===============
 
+Install Vagrant from http://www.vagrantup.com/downloads
+
+
+ssh pwd : tcuser
+
+vagrant up
+
+localhost:8024/static/index.html
 
 
 
