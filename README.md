@@ -10,7 +10,9 @@ docker build -t kiki/spring-jdk8 .
 ./restart_es
 
 
-from /spring-jdk8-docker : docker build -t kiki/elasticsearch-marvel .
+from /spring-jdk8-docker :
+
+docker build -t kiki/elasticsearch-marvel .
 
 ./restart_WAE
 
@@ -22,17 +24,29 @@ from /spring-jdk8-docker : docker build -t kiki/elasticsearch-marvel .
 
 
 
-With Vagrant
+With Vagrant (easiest)
 ===============
 
 Install Vagrant from http://www.vagrantup.com/downloads
 
-
-ssh pwd : tcuser
+checkout this repo, with a CLI from the root of the repo (where the Vagrantfile is)
 
 vagrant up
 
+(if asked : ssh pwd : tcuser)
+
+Once all is downloaded (a bit long the very first time)
+
 localhost:8024/static/index.html
+
+
+
+Whatsapp format
+======================
+
+Currently only one format is supported :
+
+DD/MM/YYYY, HH:mm - AUTHOR NAME: Stuff said by the author (with emoji)
 
 
 
