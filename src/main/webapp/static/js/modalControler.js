@@ -117,13 +117,41 @@ ModalControler.prototype.loadFileFromModal = function (event) {
         processData: false,
         success: function (data) {
 
-            $("#parse-file-progress-bar").css("width", "100%");
-            $("#parse-file-progress-bar span").html("Complete");
-            $("#modal-file-continue").removeAttr("disabled");
+            //TODO recuperer la webscoket
+            console.log("getChannel, subscribre to channel : ",data);
 
-            $("#modal-file").one("click", ModalControler.prototype.resetModal);
+            var socket = new SockJS('/whatsappQueries'); //endpoint
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function(frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+                var destination = '/parseFileFeedback/'+ data;
+                console.log('subscribe to channel ' + destination);
+                stompClient.subscribe(destination, function(loadProgressData){ //subscribe channel
+                    var loadProgress =  JSON.parse(loadProgressData.body)
+                    console.log("progress", loadProgress.value,"/",loadProgress.total);
 
-            ConversationHelper.prototype.setConversationName(conversationName);
+
+                    $("#parse-file-progress-bar").css("width", (loadProgress.value/loadProgress.total)+"%");
+
+                    if(loadProgress.value == -24){
+                        //this is the end, TODO recevra un autre object de fin
+
+                        $("#parse-file-progress-bar").css("width", "100%");
+                        $("#parse-file-progress-bar span").html("Complete");
+                        $("#modal-file-continue").removeAttr("disabled");
+
+                        $("#modal-file").one("click", ModalControler.prototype.resetModal);
+
+                        ConversationHelper.prototype.setConversationName(conversationName);
+                    }
+
+
+                });
+            });
+
+
+
 
         },
         error: function (jqXHR, textStatus, errorThrown) {
