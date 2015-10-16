@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -37,10 +41,13 @@ public class ConversationRestController {
     ParseFileServiceImpl fileService;
 
     @Autowired
-    private ElasticsearchTemplate elasticsearchTemplate;
+    ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
     ConversationServiceImpl conversationService;
+
+    private SecureRandom random = new SecureRandom();
+
 
 
 //    @RequestMapping("parsefile")
@@ -52,15 +59,17 @@ public class ConversationRestController {
 
 
     @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
-    public
-    @ResponseBody //TODO change response !
-    String handleFileUpload(@RequestParam("conversationName") String conversationName,
+    public ResponseEntity<String> handleFileUpload(@RequestParam("conversationName") String conversationName,
                             @RequestParam("file") MultipartFile file) {
 
         if(conversationService.isNameAvailable(conversationName)) {
 
             if (!file.isEmpty()) {
                 try {
+
+                    String webSocketId = new BigInteger(130, random).toString(32);;
+
+
 //                    byte[] bytes = file.getBytes();
                     InputStream inputStream = file.getInputStream();
 //
@@ -70,18 +79,20 @@ public class ConversationRestController {
 //                    stream.close();
 
 
-                    ParseFileResponseDTO parseFileResponseDTO = fileService.parseFile(inputStream,conversationName, conversationName);
+                    fileService.parseFile(inputStream,conversationName, conversationName,webSocketId);
 
-                    return "You successfully uploaded " + conversationName + " and parsed it with "+parseFileResponseDTO.getLineCount()+" "+parseFileResponseDTO.getPostCount();
+                    return new ResponseEntity<>(webSocketId,HttpStatus.OK);
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return "You failed to upload " + conversationName + " => " + e.getMessage();
+                    return new ResponseEntity<>("You failed to upload " + conversationName + " => " + e.getMessage(),HttpStatus.BAD_REQUEST);
                 }
             } else {
-                return "You failed to upload " + conversationName + " because the file was empty.";
+                return new ResponseEntity<>("You failed to upload " + conversationName + " because the file was empty.", HttpStatus.BAD_REQUEST);
             }
         } else {
-            return "File not parsed as the conversation name "+conversationName+"is already used.";
+            return new ResponseEntity<>("File not parsed as the conversation name "+conversationName+"is already used.", HttpStatus.BAD_REQUEST);
         }
     }
 
