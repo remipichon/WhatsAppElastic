@@ -1,6 +1,7 @@
 package co.paan.service;
 
 import co.paan.rest.DTO.ParseFileResponseDTO;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.File;
 import java.io.InputStream;
@@ -10,6 +11,5 @@ import java.io.InputStream;
  */
 public interface ParseFileService {
 
-
-    ParseFileResponseDTO parseFile(InputStream inputStream, String fileName, String conversationName);
+    ParseFileResponseDTO parseFile(InputStream inputStream, String fileName, String conversationName);//, String webSocketId);
 }

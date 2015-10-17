@@ -1,9 +1,10 @@
 package co.paan.service.impl;
 
+import co.paan.configuration.Channels;
 import co.paan.entities.Post;
+import co.paan.entities.Progress;
 import co.paan.repository.ConversationRepository;
 import co.paan.rest.DTO.ParseFileResponseDTO;
-import co.paan.service.ParseFileService;
 import co.paan.service.PostService;
 import com.google.common.io.CharStreams;
 import org.elasticsearch.bootstrap.Elasticsearch;
@@ -11,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -22,11 +25,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by remi on 04/07/15.
- */
 @Service
-public class ParseFileServiceImpl implements ParseFileService {
+public class ParseFileServiceImpl {//} implements ParseFileService {
 
     private static final Logger logger = LoggerFactory.getLogger(ParseFileServiceImpl.class);
 
@@ -36,37 +36,38 @@ public class ParseFileServiceImpl implements ParseFileService {
     @Autowired
     ConversationServiceImpl conversationService;
 
+    @Autowired
+    private SimpMessagingTemplate template;
 
-    @Override
-    public ParseFileResponseDTO parseFile(InputStream inputStream, String fileName, String conversationName) {
-        //Get file from resources folder
-       // ClassLoader classLoader = getClass().getClassLoader();
-//        File file = new File(classLoader.getResource(fileName).getFile());
 
+    @Async
+    public ParseFileResponseDTO parseFile(InputStream inputStream, String fileName, String conversationName, String weSocketId) {
         int postCount = 0;
         int lineCount = 0;
-//        String path = classLoader.getResource(fileName).getPath();
 
-//        try {
-            lineCount = 100;//countLines(path) + 1;
-//        } catch (IOException e) {
-//            e.printStackTrace(); //TODO capter ca dans le controleur d'error
-//        }
+        String webSocketChannel = Channels.PARSEFILE.getName() + weSocketId;
+        logger.info("websocket channel " + webSocketChannel);
+
+        lineCount = 350;
 
         int feedbackStep = lineCount / 100;
         int lineRead = 0;
         Scanner scanner = new Scanner(inputStream);
-        logger.info("Start reading " + lineCount + " lines of file");// with path0;// file.getAbsolutePath());
+        logger.info("Start reading " + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             lineRead++;
             postCount += (processLine(line, conversationName)) ? 1 : 0;
             if (postCount % feedbackStep == 0) {
                 logger.info("Read " + lineRead + " of " + lineCount);
+                this.template.convertAndSend(webSocketChannel, new Progress(lineRead, lineCount)); //sending to the channel
+
             }
         }
         scanner.close();
 
+        //TODO envpyer autre que chose que -24
+        this.template.convertAndSend(webSocketChannel, new Progress(-24, -24)); //sending to the channel
 
         logger.info(postCount + " post have been added from " + lineCount + " lines of the file ");//with path " + file.getAbsolutePath());
 

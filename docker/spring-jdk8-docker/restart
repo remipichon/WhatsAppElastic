@@ -1,2 +1,2 @@
-docker restart WAE; docker logs -tf --tail=5 WAE
+docker restart WAE; docker logs -tf --tail=1 WAE
 

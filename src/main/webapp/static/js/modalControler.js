@@ -72,6 +72,8 @@ ModalControler.prototype.switchStateInput = function ($input, state) {
     $formGroup.data("stateInput", state);
 }
 
+//window.logger = log;
+
 
 ModalControler.prototype.loadFileFromModal = function (event) {
     $(this).off(event);
@@ -106,6 +108,7 @@ ModalControler.prototype.loadFileFromModal = function (event) {
     formData.append("conversationName",conversationName);
 
 
+
     var data = JSON.stringify({ 'file': file,'conversationName': conversationName})
     $.ajax({
         url: '/api/conversation/uploadFile',
@@ -116,23 +119,18 @@ ModalControler.prototype.loadFileFromModal = function (event) {
         contentType: false,
         processData: false,
         success: function (data) {
-
-            //TODO recuperer la webscoket
-            console.log("getChannel, subscribre to channel : ",data);
-
             var socket = new SockJS('/whatsappQueries'); //endpoint
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function(frame) {
-                setConnected(true);
-                console.log('Connected: ' + frame);
                 var destination = '/parseFileFeedback/'+ data;
                 console.log('subscribe to channel ' + destination);
                 stompClient.subscribe(destination, function(loadProgressData){ //subscribe channel
                     var loadProgress =  JSON.parse(loadProgressData.body)
                     console.log("progress", loadProgress.value,"/",loadProgress.total);
 
-
-                    $("#parse-file-progress-bar").css("width", (loadProgress.value/loadProgress.total)+"%");
+                    $("#parse-file-progress-bar").css("width", (loadProgress.value/loadProgress.total)*100+"%");
+                    console.log(' progress bar' + (loadProgress.value/loadProgress.total)*100+"%");
+                    $("#parse-file-progress-bar span").html((loadProgress.value/loadProgress.total)*100+"%");
 
                     if(loadProgress.value == -24){
                         //this is the end, TODO recevra un autre object de fin
@@ -145,7 +143,6 @@ ModalControler.prototype.loadFileFromModal = function (event) {
 
                         ConversationHelper.prototype.setConversationName(conversationName);
                     }
-
 
                 });
             });

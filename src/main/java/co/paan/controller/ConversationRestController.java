@@ -26,10 +26,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 
-/**
- * Created by remi on 04/07/15.
- */
-
 @RestController
 @RequestMapping("/api/conversation")
 public class ConversationRestController {
@@ -50,14 +46,6 @@ public class ConversationRestController {
 
 
 
-//    @RequestMapping("parsefile")
-//    public @ResponseBody //TODO DEV ONLY
-//    ParseFileResponseDTO parseFile(@RequestParam(value = "conversationName") String conversationName,
-//                                          @RequestParam(value = "filename") String fileName) {
-//        return fileService.parseFile(fileName,conversationName);
-//    }
-
-
     @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
     public ResponseEntity<String> handleFileUpload(@RequestParam("conversationName") String conversationName,
                             @RequestParam("file") MultipartFile file) {
@@ -68,19 +56,8 @@ public class ConversationRestController {
                 try {
 
                     String webSocketId = new BigInteger(130, random).toString(32);;
-
-
-//                    byte[] bytes = file.getBytes();
                     InputStream inputStream = file.getInputStream();
-//
-//                    BufferedOutputStream stream =
-//                            new BufferedOutputStream(new FileOutputStream(new File("/"+conversationName)));
-//                    stream.write(bytes);
-//                    stream.close();
-
-
                     fileService.parseFile(inputStream,conversationName, conversationName,webSocketId);
-
                     return new ResponseEntity<>(webSocketId,HttpStatus.OK);
 
 
