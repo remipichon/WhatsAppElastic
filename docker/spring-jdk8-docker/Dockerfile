@@ -15,6 +15,9 @@ ENV PATH $PATH:$GRADLE_HOME/bin
 # Caches
 VOLUME ["~/.gradle/caches"]
 
+EXPOSE 5005
+EXPOSE 80
+
 #TODO
 #il faut soit chach les depencies du project, soit les embarquer dans l'image (je vais prendre cette option)
 

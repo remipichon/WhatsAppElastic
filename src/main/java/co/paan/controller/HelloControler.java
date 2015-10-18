@@ -16,6 +16,12 @@ public class HelloControler {
 
     @RequestMapping("/health")
     public String health(@RequestParam(value="name", defaultValue="World") String name) {
-        return "OK";
+        return "OKok";
+    }
+
+
+    @RequestMapping("/health_")
+    public String health_(@RequestParam(value="name", defaultValue="World") String name) {
+        return "OKokok";
     }
 }

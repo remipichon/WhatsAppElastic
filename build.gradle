@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
-        classpath 'org.springframework:springloaded:1.2.0.RELEASE'
+        classpath 'org.springframework:springloaded:1.2.4.RELEASE'
     }
 }
 
@@ -44,7 +44,7 @@ task fatJar(type: Jar) {
 
 jar {
     baseName = 'spring-boot-wae'
-    version =  '0.1.0'
+    version = '0.1.0'
 }
 
 task showMeCache << {
@@ -68,7 +68,12 @@ dependencies {
 
 }
 
+applicationDefaultJvmArgs = [
+        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
+
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
+

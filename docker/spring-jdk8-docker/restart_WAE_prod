@@ -8,5 +8,3 @@ docker logs -f WAE
 #-v ~/.gradle/:/root/.gradle/
 
 
-# docker run -ti -p 8181:80 --link ES:ES -v /home/docker/.gradle/:/root/.gradle/ -v /project:/project --name=WAE2 kiki/spring-jdk8 bash
-

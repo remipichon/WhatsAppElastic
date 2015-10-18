@@ -49,6 +49,7 @@ public class ConversationRestController {
     @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
     public ResponseEntity<String> handleFileUpload(@RequestParam("conversationName") String conversationName,
                             @RequestParam("file") MultipartFile file) {
+        String nothing;
 
         if(conversationService.isNameAvailable(conversationName)) {
 

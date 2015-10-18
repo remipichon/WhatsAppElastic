@@ -17,6 +17,8 @@ Vagrant.configure("2") do |config|
 
   #Forwarding WAE Spring
   config.vm.network :forwarded_port, guest: 8181, host: 8024
+  #debug port
+  config.vm.network :forwarded_port, guest: 5005, host: 15005
 
 
 
@@ -73,7 +75,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "docker" do |d|
     d.run "WAE",
       image: "kiki/spring-jdk8",
-      args: "-d --link ES:ES -p 8181:80 -v /home/docker/.gradle/:/root/.gradle/ -v /project:/project"
+      args: "-d --link ES:ES -p 8181:80 -p 5005:5005 -v /home/docker/.gradle/:/root/.gradle/ -v /project:/project"
   end
 
 end
