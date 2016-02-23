@@ -56,7 +56,7 @@ public class ConversationRestController {
             if (!file.isEmpty()) {
                 try {
 
-                    String webSocketId = new BigInteger(130, random).toString(32);;
+                    String webSocketId = new BigInteger(130, random).toString(32);
                     InputStream inputStream = file.getInputStream();
                     fileService.parseFile(inputStream,conversationName, conversationName,webSocketId);
                     return new ResponseEntity<>(webSocketId,HttpStatus.OK);

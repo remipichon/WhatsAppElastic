@@ -48,7 +48,9 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         String webSocketChannel = Channels.PARSEFILE.getName() + weSocketId;
         logger.info("websocket channel " + webSocketChannel);
 
-        lineCount = 350;
+        lineCount = this.countLines(inputStream); //ce truc fuck up the inputstream...
+
+
 
         int feedbackStep = lineCount / 100;
         int lineRead = 0;
@@ -80,24 +82,33 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         return countLines(new BufferedInputStream(new FileInputStream(filename)));
     }
 
-    private static int countLines(InputStream inputStream) throws IOException {
+    private static int countLines(InputStream inputStream){
         try {
             byte[] c = new byte[1024];
             int count = 0;
             int readChars = 0;
             boolean empty = true;
-            while ((readChars = inputStream.read(c)) != -1) {
-                empty = false;
-                for (int i = 0; i < readChars; ++i) {
-                    if (c[i] == '\n') {
-                        ++count;
+            try {
+                while ((readChars = inputStream.read(c)) != -1) {
+                    empty = false;
+                    for (int i = 0; i < readChars; ++i) {
+                        if (c[i] == '\n') {
+                            ++count;
+                        }
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             return (count == 0 && !empty) ? 1 : count;
         } finally {
-            // inputStream.close(); //TODO remettre ca ?
+            try {
+                inputStream.close(); //TODO remettre ca ?
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
 
