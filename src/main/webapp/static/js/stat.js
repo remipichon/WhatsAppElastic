@@ -31,6 +31,7 @@ function _StatistiqueService(options) {
     this.messagePerUserTimeline = null;
     this.messagePerUserTimelineMonth = null;
     this.fetchedRows = null;
+    this.year = function(){return new Date().getFullYear()}();
 
     this.sorted;
 
@@ -231,7 +232,7 @@ function _StatistiqueService(options) {
 
         var self = this;
         $.ajax({
-            url: '/api/stats/postCountPerMonthPerUser?year=2015',
+            url: '/api/stats/postCountPerMonthPerUser?year='+this.year,
             type: 'GET',
             async: true,
             dataType: "json",
@@ -283,7 +284,7 @@ function _StatistiqueService(options) {
 
         var self = this;
         $.ajax({
-            url: '/api/stats/postCountPerDayPerUser?year=2015&month='+month,
+            url: '/api/stats/postCountPerDayPerUser?year='+this.year+'&month='+month,
             type: 'GET',
             async: true,
             dataType: "json",

@@ -3,24 +3,19 @@ package co.paan.service.impl;
 import co.paan.configuration.Channels;
 import co.paan.entities.Post;
 import co.paan.entities.Progress;
-import co.paan.repository.ConversationRepository;
 import co.paan.rest.DTO.ParseFileResponseDTO;
 import co.paan.service.PostService;
-import com.google.common.io.CharStreams;
-import org.elasticsearch.bootstrap.Elasticsearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,15 +43,16 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         String webSocketChannel = Channels.PARSEFILE.getName() + weSocketId;
         logger.info("websocket channel " + webSocketChannel);
 
-        lineCount = this.countLines(inputStream); //ce truc fuck up the inputstream...
+        //lineCount = this.countLines(inputStream); //ce truc fuck up the inputstream...
 
 
 
-        int feedbackStep = lineCount / 100;
+        int feedbackStep = 100;//lineCount / 100;
         int lineRead = 0;
         Scanner scanner = new Scanner(inputStream);
         logger.info("Start reading " + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
+            if(lineRead == 1000) feedbackStep = 10000;
             String line = scanner.nextLine();
             lineRead++;
             postCount += (processLine(line, conversationName)) ? 1 : 0;
@@ -67,6 +63,8 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             }
         }
         scanner.close();
+
+        lineCount = lineRead;
 
         //TODO envpyer autre que chose que -24
         this.template.convertAndSend(webSocketChannel, new Progress(-24, -24)); //sending to the channel

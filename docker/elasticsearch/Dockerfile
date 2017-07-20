@@ -1,4 +1,4 @@
-FROM elasticsearch
+FROM elasticsearch:1.4.3
 #RUN plugin -i elasticsearch/marvel/latest
 
 # create image
