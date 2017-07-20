@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: 'elasticsearch-marvel'
+    container_name: 'elasticsearch'
+    build:
+      context: elasticsearch
+      dockerfile: Dockerfile
+    ports:
+      - '9300:9300'
+
+
+networks:
+  network:
