@@ -2,8 +2,6 @@ package co.paan.controller;
 
 import co.paan.entities.Conversation;
 import co.paan.entities.Post;
-import co.paan.rest.DTO.Author;
-import co.paan.rest.DTO.ParseFileResponseDTO;
 import co.paan.service.impl.ConversationServiceImpl;
 import co.paan.service.impl.ParseFileServiceImpl;
 import org.slf4j.Logger;
@@ -12,19 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Scanner;
 
 @RestController
 @RequestMapping("/api/conversation")
@@ -82,7 +77,7 @@ public class ConversationRestController {
         elasticsearchTemplate.deleteIndex(Post.class);
         elasticsearchTemplate.createIndex(Post.class);
         elasticsearchTemplate.putMapping(Post.class);
-        elasticsearchTemplate.refresh(Post.class, true);
+        elasticsearchTemplate.refresh(Post.class);
     }
 
 

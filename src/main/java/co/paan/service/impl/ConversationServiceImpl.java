@@ -1,5 +1,6 @@
 package co.paan.service.impl;
 
+
 import co.paan.entities.Conversation;
 import co.paan.entities.Post;
 import co.paan.repository.ConversationCrudRepository;
@@ -9,7 +10,6 @@ import co.paan.repository.PostRepository;
 import co.paan.rest.DTO.Author;
 import co.paan.service.ConversationService;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -96,7 +96,7 @@ public class ConversationServiceImpl implements ConversationService {
         Terms terms = aggregations.get("getPostCountByAthors");
         Collection<Terms.Bucket> buckets = terms.getBuckets();
         for (Terms.Bucket bucket : buckets) {
-            result.put(bucket.getKey(), bucket.getDocCount());
+            result.put(bucket.getKeyAsString(), bucket.getDocCount());
         }
 
 
@@ -129,7 +129,7 @@ public class ConversationServiceImpl implements ConversationService {
         Terms terms = aggregations.get("postCount");
         Collection<Terms.Bucket> buckets = terms.getBuckets();
         for (Terms.Bucket bucket : buckets) {
-            author = bucket.getKey();
+            author = bucket.getKeyAsString();
             contentStats = bucket.getAggregations().get("content_stats");
             float count = ((InternalStats) contentStats).getCount();
             float max = (float) ((InternalStats) contentStats).getMax();
@@ -234,7 +234,8 @@ public class ConversationServiceImpl implements ConversationService {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchQuery("conversationName", conversationName))
                 .withIndices("conversation").withTypes("posts")
-                .addAggregation(AggregationBuilders.filter("between_date").filter(FilterBuilders.rangeFilter("date").gte(startDate).lte(endDate))
+                .addAggregation(AggregationBuilders.filter("between_date")
+                        //.filter(FilterBuilders.rangeFilter("date").gte(startDate).lte(endDate)) //TODO to replace with something
                         .subAggregation(AggregationBuilders.terms("group_by_author").field("author").size(0)))
                 .build();
         Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
@@ -248,7 +249,7 @@ public class ConversationServiceImpl implements ConversationService {
         Aggregation aggregation = internalFilter.getAggregations().get("group_by_author");
         Collection<Terms.Bucket> buckets = ((StringTerms) aggregation).getBuckets();
         for (Terms.Bucket bucket : buckets) {
-            author = bucket.getKey();
+            author = bucket.getKeyAsString();
             count = bucket.getDocCount();
             result.put(author, count);
         }
