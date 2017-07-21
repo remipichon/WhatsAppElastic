@@ -47,12 +47,14 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
 
 
-        int feedbackStep = 100;//lineCount / 100;
+        int feedbackStep = 1;//lineCount / 100;
         int lineRead = 0;
         Scanner scanner = new Scanner(inputStream);
         logger.info("Start reading " + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
-            if(lineRead == 1000) feedbackStep = 10000;
+            if(lineRead > 100) feedbackStep = 100;
+            if(lineRead > 1000) feedbackStep = 1000;
+            //if(lineRead > 10000) feedbackStep = 10000;
             String line = scanner.nextLine();
             lineRead++;
             postCount += (processLine(line, conversationName)) ? 1 : 0;
@@ -112,23 +114,67 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
     // 21/06/2015, 14:23 - Amandine Moulin: Moi aussi j'suis : - nue 😁
     private Boolean processLine(String line, String conversationName) {
+        String[] regexes = new String[4];
+        String[] dateRegexes = new String[4];
+        Pattern pattern;
+        Matcher matcherLine, matcherDate;
+        String dateStr = null;
+        //DD/MM/YYYY, HH:mm - AUTHOR NAME:
+        String normalRegex = "(\\d{2}\\/\\d{2}\\/\\d{4})[,]\\s(\\d(?:\\d)?:\\d{2} )-\\s([^:]*):(.*?)(?=\\s*\\d{2}\\/|$)";
+        String normalDateRegex = "^(\\d{2})\\/(\\d{2})\\/(\\d{4})";
+        //M/DD/YY, HH:mm - AUTHOR NAME:
+        regexes[0] = "^(\\d{1}\\/\\d{2}\\/\\d{2})[,]\\s(\\d(?:\\d)?:\\d{2} )-\\s([^:]*):(.*?)(?=\\s*\\d{2}\\/|$)";
+        dateRegexes[0] = "^(\\d{1})\\/(\\d{2})\\/(\\d{2})";
+        //M/D/YY, HH:mm - AUTHOR NAME:
+        regexes[1] = "^(\\d{1}\\/\\d{1}\\/\\d{2})[,]\\s(\\d(?:\\d)?:\\d{2} )-\\s([^:]*):(.*?)(?=\\s*\\d{2}\\/|$)";
+        dateRegexes[1] = "^(\\d{1})\\/(\\d{1})\\/(\\d{2})";
+        //MM/DD/YY, HH:mm - AUTHOR NAME:
+        regexes[2] = "^(\\d{2}\\/\\d{2}\\/\\d{2})[,]\\s(\\d(?:\\d)?:\\d{2} )-\\s([^:]*):(.*?)(?=\\s*\\d{2}\\/|$)";
+        dateRegexes[2] = "^(\\d{2})\\/(\\d{2})\\/(\\d{2})";
+        //MM/D/YY, HH:mm - AUTHOR NAME:
+        regexes[3] = "^(\\d{2}\\/\\d{1}\\/\\d{2})[,]\\s(\\d(?:\\d)?:\\d{2} )-\\s([^:]*):(.*?)(?=\\s*\\d{2}\\/|$)";
+        dateRegexes[3] = "^(\\d{2})\\/(\\d{1})\\/(\\d{2})";
 
+        //find regular line
+        pattern = Pattern.compile(normalRegex);
+        matcherLine = pattern.matcher(line);
 
-        String regex = "(\\d{2}\\/\\d{2}\\/\\d{4})[,]\\s(\\d(?:\\d)?:\\d{2} )-\\s([^:]*):(.*?)(?=\\s*\\d{2}\\/|$)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(line);
+        if (matcherLine.find()) {
+            //DD/MM/YYYY
+            pattern = Pattern.compile(normalDateRegex);
+            matcherDate = pattern.matcher(matcherLine.group(1));
+            matcherDate.find(); //should we always true
+            //from dd/MM/YYYY to YYYY-MM-dd
+            dateStr = matcherDate.group(3) + "-" + matcherDate.group(2) + "-" + matcherDate.group(1);
+        } else {
+            //trying with uncommon regex
+            for(int i = 0; i < regexes.length; i++){
+                pattern = Pattern.compile(regexes[i]);
+                matcherLine = pattern.matcher(line);
+                if (matcherLine.find()) {
+                    pattern = Pattern.compile(dateRegexes[i]);
+                    matcherDate = pattern.matcher(line);
+                    matcherDate.find();
+                    dateStr = "20" + matcherDate.group(3) + "-" +  //will not work for the third milena
+                            ((matcherDate.group(1).length() == 1)? "0"+matcherDate.group(1): matcherDate.group(1))
+                            + "-" +
+                            ((matcherDate.group(2).length() == 1)? "0"+matcherDate.group(2): matcherDate.group(2));
 
-        if (!matcher.find()) return false;
+                    break;
+                }
+            }
+            if(dateStr == null) return false;
+        }
+
 
         Post post = new Post();
-        post.setAuthor(matcher.group(3));
-        post.setContent(matcher.group(4));
+        post.setAuthor(matcherLine.group(3));
+        post.setContent(matcherLine.group(4));
         post.setConversationName(conversationName);
 
-        String dateStr = matcher.group(1);
-        String hourStr = matcher.group(2); //TODO hour
-        //from dd/MM/YYYY to YYYY-MM-dd
-        post.setDate(dateStr.substring(6, 10) + "-" + dateStr.substring(3, 5) + "-" + dateStr.substring(0, 2));
+        String hourStr = matcherLine.group(2); //TODO hour
+
+        post.setDate(dateStr);
 
         postService.save(post);
 
