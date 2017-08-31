@@ -1,73 +1,30 @@
 
-Docker
-=============
-Install Docker
-
-from /elasticsearch-docker :
-
-docker build -t kiki/spring-jdk8 .
-
-./restart_es
+# Install
 
 
-from /spring-jdk8-docker :
+* install Docker and Docker Compose
+````
+docker-compose build 
+docker-compose up -d
+````
 
-docker build -t kiki/elasticsearch-marvel .
-
-./restart_WAE
+visit http://localhost:8080/static/index.html
 
 
 
-=> 192.168.59.103:8181/static/index.html
-
-(change elasticsearch.host = 192.168.59.103 to localhost if you use Docker on a Linux, leave it if you use Boot2Docker for OsX)
-
+# What is it 
+Procuce stats from a WhatsApp discussion
 
 
-With Vagrant (easiest)
-===============
+## Whatsapp supported format
 
-Install Vagrant from http://www.vagrantup.com/downloads
-
-checkout this repo, with a CLI from the root of the repo (where the Vagrantfile is)
-
-vagrant up
-
-(if asked : ssh pwd : tcuser)
-
-Once all is downloaded (a bit long the very first time)
-
-localhost:8024/static/index.html
-
-
-
-Whatsapp format
-======================
-
-Currently only one format is supported :
-
+Currently following format are supported
+````
 DD/MM/YYYY, HH:mm - AUTHOR NAME: Stuff said by the author (with emoji)
+annoying date format 
+````
 
 
 
-
-spring-data-elasticsearch-sample
-================================
-
-spring boot elasticsearch sample
-
-
-  1. Install Elasticsearch
-
-  2. Install Gradle
-
-  3. IDE Eclipse or Intellij  IDEA
-
-Step by Step Coding
-
-
-En:  
-      http://java.dzone.com/articles/first-step-spring-boot-and
-
-Vi:   
-      http://javadanang.com/497/spring-boot-ket-hop-voi-elasticsearch.html
+# Old stuff
+docker run -d -p 8181:80  -p 5005:5005 --link ES:ES -v /home/docker/.gradle/:/root/.gradle/ -v /project:/project --name=WAE kiki/spring-jdk8

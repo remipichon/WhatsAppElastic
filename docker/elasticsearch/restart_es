@@ -1,4 +1,0 @@
-docker stop ES
-docker rm ES
-docker run -d -p 19200:9200 -p 19300:9300 --name=ES kiki/elasticsearch-marvel
-docker logs -f ES

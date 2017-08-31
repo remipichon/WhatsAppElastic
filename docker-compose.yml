@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: 'elasticsearch-marvel'
+    container_name: 'elasticsearch'
+    build:
+      context: .
+      dockerfile: Dockerfile-elasticsearch
+    ports:
+      - '9300:9300'
+      - '9200:9200'
+  spring-app:
+    image: 'spring-app'
+    container_name: 'wae'
+    depends_on:
+      - elasticsearch
+    build:
+      context: .
+      dockerfile: Dockerfile-app
+    ports:
+      - '8080:8080'
+      - '8081:8181'
+      - '5005:5005'
+    volumes:
+     - '~/.gradle/:/root/.gradle'
+     - './app:/project'
+
+networks:
+  network:
