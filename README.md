@@ -10,7 +10,14 @@ docker-compose up -d
 
 visit http://localhost:8080/static/index.html
 
+# Dev 
 
+volume is mounted
+
+html is ready as it, just refresh page
+
+for java, recompile with (40s)
+docker-compose restart spring-app; docker-compose logs -f spring-app
 
 # What is it 
 Procuce stats from a WhatsApp discussion
