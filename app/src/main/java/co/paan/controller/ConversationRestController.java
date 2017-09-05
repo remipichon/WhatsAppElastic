@@ -18,8 +18,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Scanner;
@@ -28,7 +26,7 @@ import java.util.Scanner;
 @RequestMapping("/api/conversation")
 public class ConversationRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ParseFileServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConversationRestController.class);
 
 
     @Autowired
@@ -39,9 +37,6 @@ public class ConversationRestController {
 
     @Autowired
     ConversationServiceImpl conversationService;
-
-    private SecureRandom random = new SecureRandom();
-
 
 
     @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
@@ -54,10 +49,9 @@ public class ConversationRestController {
             if (!file.isEmpty()) {
                 try {
 
-                    String webSocketId = new BigInteger(130, random).toString(32);
                     InputStream inputStream = file.getInputStream();
-                    fileService.parseFile(inputStream,conversationName, conversationName,webSocketId);
-                    return new ResponseEntity<>(webSocketId,HttpStatus.OK);
+                    fileService.parseFile(inputStream, conversationName,null);
+                    return new ResponseEntity<>("Websocket is no more available for UI based conversation",HttpStatus.OK);
 
 
                 } catch (Exception e) {
@@ -108,42 +102,61 @@ public class ConversationRestController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         //debug only, uncommenting this will consume the input stream and make it empty for the parsing
-//        System.out.println("Debug: file content not decoded");
-//        Scanner scanner2 = null;
-//        try {
-//            scanner2 = new Scanner(file.getInputStream());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        while (scanner2.hasNextLine()) {
-//            String line = scanner2.nextLine();
-//            System.out.println(line);
-//        }
-//        scanner2.close();
-//
-//        System.out.println("Debug: file content decoded");
-//        Scanner scanner = new Scanner(decodedInputStream);
-//        while (scanner.hasNextLine()) {
-//            String line = scanner.nextLine();
-//            System.out.println(line);
-//        }
-//        scanner.close();
+        //printFileContent(file, decodedInputStream);
 
+        String conversationName = conversationService.getRandomConversationName();
+        System.out.println("conversationName " + conversationName);
 
         //use unique conversation ID
+        conversationService.create(conversationName);
+        Conversation conversation = conversationService.getByName(conversationName);
+        System.out.println("conversationId " + conversation.getId());
 
         //send mail with link to sender
+        System.out.println("TODO send an email to "+fromMail);
+        if(conversation == null){
+            System.out.println("conversation name "+conversationName+" is not available");
+        } else {
+            String link = "/" + conversation.getId();
+            System.out.println("please use link to follow progress and get the stat" + link);
+        }
 
-        //read conversation and parse it to ES async
-        String webSocketId = new BigInteger(130, random).toString(32);
-        fileService.parseFile(decodedInputStream,null, "TEST",webSocketId);
-
+        //read conversation async and parse it to ES async
+        fileService.parseFile(decodedInputStream, conversation);
 
         //return result (without waiting for the parse to be done)
         return new ResponseEntity<String>("Mail from " + fromMail + " is being parsed.",HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Conversation> get(@RequestParam(value = "conversationId") String conversationId){
+        Conversation conversation = conversationService.getById(conversationId);
+        return new ResponseEntity<Conversation>(conversation, HttpStatus.OK);
+    }
+
+
+    private void printFileContent(MultipartFile file, InputStream decodedInputStream) {
+        System.out.println("Debug: file content not decoded");
+        Scanner scanner2 = null;
+        try {
+            scanner2 = new Scanner(file.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        while (scanner2.hasNextLine()) {
+            String line = scanner2.nextLine();
+            System.out.println(line);
+        }
+        scanner2.close();
+
+        System.out.println("Debug: file content decoded");
+        Scanner scanner = new Scanner(decodedInputStream);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            System.out.println(line);
+        }
+        scanner.close();
     }
 
 

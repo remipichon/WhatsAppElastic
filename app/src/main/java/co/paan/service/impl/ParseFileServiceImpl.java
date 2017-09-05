@@ -1,9 +1,9 @@
 package co.paan.service.impl;
 
 import co.paan.configuration.Channels;
+import co.paan.entities.Conversation;
 import co.paan.entities.Post;
 import co.paan.entities.Progress;
-import co.paan.rest.DTO.ParseFileResponseDTO;
 import co.paan.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,13 +36,23 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
     @Autowired
     private SimpMessagingTemplate template;
 
+    private SecureRandom random = new SecureRandom();
+
+//    @Override
+    public void parseFile(InputStream inputStream, String fileName, String conversationName) {
+        Conversation conversation = conversationService.create(conversationName);
+        parseFile(inputStream,conversation);
+    }
 
     @Async
-    public ParseFileResponseDTO parseFile(InputStream inputStream, String fileName, String conversationName, String weSocketId) {
+//    @Override
+    public void parseFile(InputStream inputStream, Conversation conversation) {
         int postCount = 0;
         int lineCount = 0;
 
-        String webSocketChannel = Channels.PARSEFILE.getName() + weSocketId;
+        String webSocketChannel = getWebSocketChannel(conversation.getId());
+
+
         logger.info("websocket channel " + webSocketChannel);
 
         //lineCount = this.countLines(inputStream); //ce truc fuck up the inputstream...
@@ -49,16 +61,16 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         int feedbackStep = 1;//lineCount / 100;
         int lineRead = 0;
         Scanner scanner = new Scanner(inputStream);
-        logger.info("Start reading " + conversationName);// + lineCount + " lines of file");
+        logger.info("Start reading " + conversation.getName());// + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
             if(lineRead > 100) feedbackStep = 100;
             if(lineRead > 1000) feedbackStep = 1000;
             //if(lineRead > 10000) feedbackStep = 10000;
             String line = scanner.nextLine();
             lineRead++;
-            postCount += (processLine(line, conversationName)) ? 1 : 0;
+            postCount += (processLine(line, conversation.getName())) ? 1 : 0;
             if (postCount % feedbackStep == 0) {
-                logger.info("Reading " + conversationName + ": line" +lineRead);// + " of " + lineCount);
+                logger.info("Reading " + conversation.getName() + ": line" +lineRead);// + " of " + lineCount);
                 this.template.convertAndSend(webSocketChannel, new Progress(lineRead, lineCount)); //sending to the channel
 
             }
@@ -67,14 +79,19 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
         lineCount = lineRead;
 
-        //TODO envpyer autre que chose que -24
+        conversationService.setParsed(conversation);
+
+        //TODO envoyer autre que chose que -24
         this.template.convertAndSend(webSocketChannel, new Progress(-24, -24)); //sending to the channel
 
-        logger.info("Done reading " + conversationName + ": " + postCount + " post have been added from " + lineRead + " lines read");//with path " + file.getAbsolutePath());
+        logger.info("Done reading " + conversation.getName() + ": " + postCount + " post have been added from " + lineRead + " lines read");//with path " + file.getAbsolutePath());
 
-        conversationService.create(conversationName, postCount);
+    }
 
-        return new ParseFileResponseDTO(postCount, lineCount);
+//    @Override
+    public String getWebSocketChannel(String webSocketId){
+        if(webSocketId == null) webSocketId = new BigInteger(130, random).toString(32);
+        return Channels.PARSEFILE.getName() + webSocketId;
     }
 
     private static int countLines(String filename) throws IOException {

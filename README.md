@@ -34,6 +34,10 @@ rm temp
 
 "attachment" refers to mailinMsg.json 
 
+## Attach to websocket
+
+TODO
+
 
 # What is it 
 Procuce stats from a WhatsApp discussion

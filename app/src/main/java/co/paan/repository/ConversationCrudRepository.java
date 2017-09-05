@@ -3,7 +3,6 @@ package co.paan.repository;
 import co.paan.entities.Conversation;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

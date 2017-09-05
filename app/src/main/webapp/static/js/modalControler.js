@@ -122,7 +122,7 @@ ModalControler.prototype.loadFileFromModal = function (event) {
             var socket = new SockJS('/whatsappQueries'); //endpoint
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function(frame) {
-                var destination = '/parseFileFeedback/'+ data;
+                var destination = '/parseFileFeedback/'+ data; //TODO parseFileFeedback is now given back by the backend
                 console.log('subscribe to channel ' + destination);
                 stompClient.subscribe(destination, function(loadProgressData){ //subscribe channel
                     var loadProgress =  JSON.parse(loadProgressData.body)

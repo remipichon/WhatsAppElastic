@@ -23,15 +23,24 @@ public class Conversation {
     @Field(type = FieldType.Date)
     private Date creationDate;
 
-    private Integer postCount;
+    @Field(type = FieldType.Boolean)
+    private Boolean isParsed = false;
 
     public Conversation() { //required by Jackson
+    }
+
+    public Conversation(String name, Date creationDate) {
+        this.name = name;
+        this.creationDate = creationDate;
     }
 
     public Conversation(String name, Date creationDate, Integer postCount) {
         this.name = name;
         this.creationDate = creationDate;
-        this.postCount = postCount;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {
@@ -50,11 +59,11 @@ public class Conversation {
         this.creationDate = creationDate;
     }
 
-    public Integer getPostCount() {
-        return postCount;
+    public Boolean getParsed() {
+        return isParsed;
     }
 
-    public void setPostCount(Integer postCount) {
-        this.postCount = postCount;
+    public void setParsed(Boolean parsed) {
+        isParsed = parsed;
     }
 }

@@ -52,6 +52,8 @@ public class ConversationServiceImpl implements ConversationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConversationServiceImpl.class);
 
+    private String[] poolOfNames = {"elephant", "castor", "girafe","poule","hippo","croco","vache","hibou"};
+
 
     @Override
     public ArrayList<Author> getAuthorsByConversationName(String conversationName) {
@@ -352,7 +354,43 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
+    public Conversation create(String conversationName) {
+        if(this.isNameAvailable(conversationName))
+            return conversationRepository.save(new Conversation(conversationName, new Date()));
+        return null;
+    }
+
+    @Override
+    public Conversation setParsed(Conversation conversation){
+        conversation.setParsed(true);
+        return conversationRepository.save(conversation);
+    }
+
+    @Override
     public boolean isNameAvailable(String conversationName) {
         return conversationCrudRepository.findByName(conversationName).isEmpty(); //TODO il y a certainement bien mieux à faire
     }
+
+    @Override
+    public Conversation getByName(String name){
+        return conversationCrudRepository.findByName(name).get(0);
+    }
+
+    @Override
+    public Conversation getById(String id){
+        return conversationCrudRepository.findOne(Integer.valueOf(id));
+    }
+
+    @Override
+    public String getRandomConversationName(){
+        Random r = new Random();
+        int one = r.nextInt(poolOfNames.length - 1);
+        int two = r.nextInt(poolOfNames.length - 1);
+        String conversationName = poolOfNames[one] + "_" + poolOfNames[two];
+        if(!this.isNameAvailable(conversationName)){
+            conversationName = getRandomConversationName();
+        }
+        return conversationName;
+    }
+
 }

@@ -41,5 +41,15 @@ public interface ConversationService {
 
     Conversation create(String conversationName, int postCount);
 
+    Conversation create(String conversationName);
+
+    Conversation setParsed(Conversation conversation);
+
     boolean isNameAvailable(String conversationName);
+
+    Conversation getByName(String name);
+
+    Conversation getById(String id);
+
+    String getRandomConversationName();
 }
