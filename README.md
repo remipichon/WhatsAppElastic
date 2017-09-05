@@ -17,7 +17,23 @@ volume is mounted
 html is ready as it, just refresh page
 
 for java, recompile with (40s)
-docker-compose restart spring-app; docker-compose logs -f spring-app
+`````
+docker-compose restart spring-app; docker-compose logs --tail 100 -f spring-app
+`````
+
+
+## Mock mail 
+
+````
+cd test
+cat whatspam_extra_light.txt | base64 > temp
+curl  -F "attachment=@temp" -F "mailinMsg=$(cat mailinMsg.json)"  "localhost:8080/api/conversation/mailhook"
+curl  -F TestFile=@"temp" -F mailinMsg=@"mailinMsg.json"  "localhost:8080/api/conversation/mailhook"
+rm temp
+````
+
+"attachment" refers to mailinMsg.json 
+
 
 # What is it 
 Procuce stats from a WhatsApp discussion

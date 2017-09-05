@@ -46,11 +46,10 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         //lineCount = this.countLines(inputStream); //ce truc fuck up the inputstream...
 
 
-
         int feedbackStep = 1;//lineCount / 100;
         int lineRead = 0;
         Scanner scanner = new Scanner(inputStream);
-        logger.info("Start reading " + lineCount + " lines of file");
+        logger.info("Start reading " + conversationName);// + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
             if(lineRead > 100) feedbackStep = 100;
             if(lineRead > 1000) feedbackStep = 1000;
@@ -59,7 +58,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             lineRead++;
             postCount += (processLine(line, conversationName)) ? 1 : 0;
             if (postCount % feedbackStep == 0) {
-                logger.info("Read " + lineRead + " of " + lineCount);
+                logger.info("Reading " + conversationName + ": line" +lineRead);// + " of " + lineCount);
                 this.template.convertAndSend(webSocketChannel, new Progress(lineRead, lineCount)); //sending to the channel
 
             }
@@ -71,7 +70,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         //TODO envpyer autre que chose que -24
         this.template.convertAndSend(webSocketChannel, new Progress(-24, -24)); //sending to the channel
 
-        logger.info(postCount + " post have been added from " + lineCount + " lines of the file ");//with path " + file.getAbsolutePath());
+        logger.info("Done reading " + conversationName + ": " + postCount + " post have been added from " + lineRead + " lines read");//with path " + file.getAbsolutePath());
 
         conversationService.create(conversationName, postCount);
 
