@@ -6,8 +6,7 @@ services:
     networks:
       default:
         external:
-          name:
-            - voc_mail
+          name: voc_mail
     container_name: 'elasticsearch'
     build:
       context: .
