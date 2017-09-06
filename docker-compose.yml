@@ -25,7 +25,7 @@ services:
       - '8081:8181'
       - '5005:5005'
     volumes:
-     - '~/.gradle/:/root/.gradle'
+     #- '~/.gradle/:/root/.gradle'
      - './app:/project'
 
 networks:
