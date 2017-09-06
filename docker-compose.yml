@@ -3,10 +3,6 @@ version: '3'
 services:
   elasticsearch:
     image: 'elasticsearch-marvel'
-    networks:
-      default:
-        external:
-          name: voc_mail
     container_name: 'elasticsearch'
     build:
       context: .
@@ -16,6 +12,8 @@ services:
       - '9200:9200'
   spring-app:
     image: 'spring-app'
+    networks:
+      - voc_mail
     container_name: 'wae'
     depends_on:
       - elasticsearch
@@ -31,4 +29,5 @@ services:
      - './app:/project'
 
 networks:
-  network:
+  voc_mail:
+    external: true
