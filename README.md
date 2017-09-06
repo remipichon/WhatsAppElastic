@@ -21,6 +21,10 @@ for java, recompile with (40s)
 docker-compose restart spring-app; docker-compose logs --tail 100 -f spring-app
 `````
 
+````
+docker-compose build
+docker stack deploy -c docker-compose.yml wae
+````
 
 ## Mock mail 
 

@@ -15,7 +15,11 @@ ENV GRADLE_HOME /usr/bin/gradle
 ENV PATH $PATH:$GRADLE_HOME/bin
 
 # Caches
-VOLUME ["/root/.gradle"]
+#VOLUME ["/root/.gradle"]
+
+COPY app /project
+
+RUN cd /project; gradle build
 
 EXPOSE 5005
 EXPOSE 80
@@ -23,9 +27,9 @@ EXPOSE 80
 #TODO
 #il faut soit cache les depencies du project, soit les embarquer dans l'image (je vais prendre cette option)
 
-
+CMD java -Dserver.port=80 -jar build/libs/spring-boot-wae-0.1.0.jar
 #CMD cd /project && gradle build && java -Dserver.port=80 -jar build/libs/spring-boot-wae-0.1.0.jar
-CMD cd /project && gradle bootRun
+#CMD cd /project && gradle bootRun
 
 
 
