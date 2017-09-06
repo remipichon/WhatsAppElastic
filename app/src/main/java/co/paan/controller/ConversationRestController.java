@@ -3,6 +3,7 @@ package co.paan.controller;
 import co.paan.entities.Conversation;
 import co.paan.entities.Post;
 import co.paan.service.impl.ConversationServiceImpl;
+import co.paan.service.impl.EmailServiceImpl;
 import co.paan.service.impl.ParseFileServiceImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,6 +38,9 @@ public class ConversationRestController {
 
     @Autowired
     ConversationServiceImpl conversationService;
+
+    @Autowired
+    EmailServiceImpl emailService;
 
 
     @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
@@ -108,25 +112,29 @@ public class ConversationRestController {
         String conversationName = conversationService.getRandomConversationName();
         System.out.println("conversationName " + conversationName);
 
-        //use unique conversation ID
-        conversationService.create(conversationName);
-        Conversation conversation = conversationService.getByName(conversationName);
-        System.out.println("conversationId " + conversation.getId());
+        //use unique conversation name
+        Conversation conversation = conversationService.create(conversationName);
 
         //send mail with link to sender
         System.out.println("TODO send an email to "+fromMail);
+        String subject = "No subject", body = "No body";
         if(conversation == null){
-            System.out.println("conversation name "+conversationName+" is not available");
+            body = "conversation name '"+conversation.getName()+"' is not available";
         } else {
-            String link = "/" + conversation.getId();
-            System.out.println("please use link to follow progress and get the stat" + link);
+            String link = "/" + conversation.getName();
+            body = "please use link to follow progress and get the stat" + link;
         }
+        subject="About the conversation you sent to whatsapp@email.remip.eu";
+        System.out.println("Sending email to "+fromMail+".\nSubject: "+subject+"\nBody:\n"+body);
+
+        emailService.sendSimpleMessage(fromMail, subject, body);
+
 
         //read conversation async and parse it to ES async
         fileService.parseFile(decodedInputStream, conversation);
 
         //return result (without waiting for the parse to be done)
-        return new ResponseEntity<String>("Mail from " + fromMail + " is being parsed.",HttpStatus.OK);
+        return new ResponseEntity<String>("Mail from " + fromMail + " is being parsed into " + conversation.getName() +". Get parse feedback with Websocket channel "+ fileService.getWebSocketChannel(conversation.getName()),HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)

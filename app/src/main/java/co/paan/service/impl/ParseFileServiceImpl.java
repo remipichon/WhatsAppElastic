@@ -50,7 +50,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         int postCount = 0;
         int lineCount = 0;
 
-        String webSocketChannel = getWebSocketChannel(conversation.getId());
+        String webSocketChannel = getWebSocketChannel(conversation.getName());
 
 
         logger.info("websocket channel " + webSocketChannel);

@@ -384,8 +384,8 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     public String getRandomConversationName(){
         Random r = new Random();
-        int one = r.nextInt(poolOfNames.length - 1);
-        int two = r.nextInt(poolOfNames.length - 1);
+        int one = r.nextInt(poolOfNames.length);
+        int two = r.nextInt(poolOfNames.length);
         String conversationName = poolOfNames[one] + "_" + poolOfNames[two];
         if(!this.isNameAvailable(conversationName)){
             conversationName = getRandomConversationName();
