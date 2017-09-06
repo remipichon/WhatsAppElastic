@@ -368,7 +368,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public boolean isNameAvailable(String conversationName) {
-        return conversationCrudRepository.findByName(conversationName).isEmpty(); //TODO il y a certainement bien mieux à faire
+        return true;//conversationCrudRepository.findByName(conversationName).isEmpty(); //TODO il y a certainement bien mieux à faire
     }
 
     @Override
@@ -388,14 +388,15 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public String getRandomConversationName(){
-        Random r = new Random();
-        int one = r.nextInt(poolOfNames.length);
-        int two = r.nextInt(poolOfNames.length);
-        String conversationName = poolOfNames[one] + "_" + poolOfNames[two];
-        if(!this.isNameAvailable(conversationName)){
-            conversationName = getRandomConversationName();
-        }
-        return conversationName;
+        return "pouet";
+//        Random r = new Random();
+//        int one = r.nextInt(poolOfNames.length);
+//        int two = r.nextInt(poolOfNames.length);
+//        String conversationName = poolOfNames[one] + "_" + poolOfNames[two];
+//        if(!this.isNameAvailable(conversationName)){
+//            conversationName = getRandomConversationName();
+//        }
+//        return conversationName;
     }
 
 }

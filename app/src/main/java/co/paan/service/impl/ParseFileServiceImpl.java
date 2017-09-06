@@ -60,6 +60,8 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
         int feedbackStep = 1;//lineCount / 100;
         int lineRead = 0;
+        String startDate = null;
+        Post post;
         Scanner scanner = new Scanner(inputStream);
         logger.info("Start reading " + conversation.getName());// + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
@@ -68,10 +70,12 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             //if(lineRead > 10000) feedbackStep = 10000;
             String line = scanner.nextLine();
             lineRead++;
-            postCount += (processLine(line, conversation.getName())) ? 1 : 0;
+            post = processLine(line, conversation.getName());
+            if(startDate == null) startDate = post.getDate();
+            postCount += post != null ? 1 : 0;
             if (postCount % feedbackStep == 0) {
-                logger.info("Reading " + conversation.getName() + ": line" +lineRead);// + " of " + lineCount);
-                this.template.convertAndSend(webSocketChannel, new Progress(lineRead, lineCount)); //sending to the channel
+                logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount);// + " of " + lineCount);
+                this.template.convertAndSend(webSocketChannel, new Progress(lineRead, post.getDate(), startDate)); //sending to the channel
 
             }
         }
@@ -82,7 +86,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         conversationService.setParsed(conversation);
 
         //TODO envoyer autre que chose que -24
-        this.template.convertAndSend(webSocketChannel, new Progress(-24, -24)); //sending to the channel
+        this.template.convertAndSend(webSocketChannel, new Progress(-24, "","")); //sending to the channel
 
         logger.info("Done reading " + conversation.getName() + ": " + postCount + " post have been added from " + lineRead + " lines read");//with path " + file.getAbsolutePath());
 
@@ -129,7 +133,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
 
     // 21/06/2015, 14:23 - Amandine Moulin: Moi aussi j'suis : - nue 😁
-    private Boolean processLine(String line, String conversationName) {
+    private Post processLine(String line, String conversationName) {
         String[] regexes = new String[4];
         String[] dateRegexes = new String[4];
         Pattern pattern;
@@ -179,7 +183,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
                     break;
                 }
             }
-            if(dateStr == null) return false;
+            if(dateStr == null) return null;
         }
 
 
@@ -192,9 +196,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
         post.setDate(dateStr);
 
-        postService.save(post);
-
-        return true;
+        return postService.save(post);
 
     }
 

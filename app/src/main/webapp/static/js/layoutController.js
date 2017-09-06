@@ -4,19 +4,20 @@ LayoutController = function () {
 
 Layout =  {
     "charts": "charts",
-    "feedback": "feedback"
+    "feedback": "feedback",
+    "help": "help"
 };
 
 
 LayoutController.prototype.init = function(){
     this.hide(Layout.charts);
     this.hide(Layout.feedback);
+    this.hide(Layout.help);
 
     //read anchor to get conversation name
     var conversationName = window.location.hash.replace("#","");
     if(!conversationName){
-        ConversationHelper.prototype.setConversationName("missing");
-        alert("No conversation name as been found in the url (after the anchor #)")
+        this.show(Layout.help);
         return;
     }
 
@@ -34,21 +35,67 @@ LayoutController.prototype.init = function(){
             if (data.parsed) {
                 this.drawChart();
             } else {
-                this.initWebsocket()
+                this.initWebsocket(data.name)
             }
 
         },this),
-        error: function (jqXHR, textStatus, errorThrown) {
+        error: _.bind(function (jqXHR, textStatus, errorThrown) {
             log.error(textStatus, errorThrown);
-        }
+            this.show(Layout.help);
+        },this)
     });
 
 };
 
-LayoutController.prototype.initWebsocket = function(){
+LayoutController.prototype.initWebsocket = function(conversationName){
     this.show(Layout.feedback);
 
     //init websocket to update the loader
+    var socket = new SockJS('/whatsappQueries'); //endpoint
+    var stompClient = Stomp.over(socket);
+    stompClient.connect({}, _.bind(function(frame) {
+        var destination = '/parseFileFeedback/'+ conversationName;
+        console.log('subscribe to channel ' + destination);
+        stompClient.subscribe(destination, _.bind(function(loadProgressData){ //subscribe channel
+            var loadProgress =  JSON.parse(loadProgressData.body);
+
+            log.info(destination,loadProgress);
+
+            var ESformat = "YYYY-MM-dd";
+            var startDate = new moment(loadProgress.startDate, ESformat);
+            var currentDate = new moment(loadProgress.currentParseDate, ESformat);
+            var endDate = new moment();
+            var lineRead = loadProgress.lineRead;
+
+            var wholeDateSpan = endDate.diff(startDate);
+            var alreadyDone = currentDate.diff(startDate);
+            var percentage = alreadyDone / wholeDateSpan;
+
+
+            log.info("destination progress", startDate, endDate, currentDate, lineRead, percentage);
+
+            $("#line-read-count").html(lineRead);
+
+            var percentageProgress = (percentage)*100+"%";
+
+
+            $("#parse-file-progress-bar").css("width", percentageProgress);
+            console.log(' progress bar' + (loadProgress.value/loadProgress.total)*100+"%");
+            $("#parse-file-progress-bar span").html(percentageProgress);
+
+
+            if(lineRead == -24){
+                //this is the end
+
+                $("#parse-file-progress-bar").css("width", "100%");
+                $("#parse-file-progress-bar span").html("Complete");
+
+                this.drawChart();
+
+            }
+
+        },this));
+    },this));
 };
 
 
