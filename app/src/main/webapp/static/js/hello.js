@@ -21,11 +21,6 @@ $(document).ready(function () {
         log.info.apply(this, args);
     };
 
-
-    LayoutController.prototype.init();
-
-
-
     DatetimePickerService.prototype.initDatePicker();
     DatetimePickerService.prototype.initTimePicker();
     $("#draw-button").on("click", HighchartsService.prototype.initDrawHighcharts);

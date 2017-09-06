@@ -22,6 +22,8 @@ $(document).ready(function () {
     };
 
 
+    highchartsService = new HighchartsService();
+
     LayoutController.prototype.init();
 
 

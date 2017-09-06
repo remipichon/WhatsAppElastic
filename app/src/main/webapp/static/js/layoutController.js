@@ -1,9 +1,16 @@
 
 LayoutController = function () {
-
 };
 
+Layout =  {
+    "charts": "charts",
+    "feedback": "feedback"
+};
+
+
 LayoutController.prototype.init = function(){
+    this.hide(Layout.charts);
+    this.hide(Layout.feedback);
 
     //read anchor to get conversation name
     var conversationName = window.location.hash.replace("#","");
@@ -20,26 +27,47 @@ LayoutController.prototype.init = function(){
         url: '/api/conversation?conversationName='+conversationName,
         type: 'GET',
         cache: false,
-        success: function (data) {
+        success: _.bind(function (data) {
 
             console.log('data from /api/conversation?conversationName='+conversationName,data);
 
-            if(!data.parsed){
-
-                //draw charts HighchartsService.prototype.initDrawHighcharts
-                var statistique = HighchartsService.prototype.initDrawHighcharts()
-                HighchartsService.prototype.drawHighcharts(statistique);
+            if (data.parsed) {
+                this.drawChart();
             } else {
-                //show feedback and init websocket to update the loader
+                this.initWebsocket()
             }
 
-        },
+        },this),
         error: function (jqXHR, textStatus, errorThrown) {
             log.error(textStatus, errorThrown);
         }
     });
 
 };
+
+LayoutController.prototype.initWebsocket = function(){
+    this.show(Layout.feedback);
+
+    //init websocket to update the loader
+};
+
+
+LayoutController.prototype.drawChart = function(){
+    var statistique = HighchartsService.prototype.initDrawHighcharts()
+    HighchartsService.prototype.drawHighcharts(statistique);
+    this.show(Layout.charts);
+    this.hide(Layout.feedback);
+};
+
+LayoutController.prototype.hide = function(target){
+    $("#"+target).hide();
+};
+
+LayoutController.prototype.show = function(target){
+    $("#"+target).show();
+};
+
+
 
 
 
