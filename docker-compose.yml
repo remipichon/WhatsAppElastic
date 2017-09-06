@@ -3,7 +3,7 @@ version: '3'
 services:
   elasticsearch:
     image: 'elasticsearch-marvel'
-    network:
+    networks:
       - voc_mail
     container_name: 'elasticsearch'
     build:
