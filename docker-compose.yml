@@ -4,6 +4,8 @@ services:
   elasticsearch:
     image: 'elasticsearch-marvel'
     container_name: 'elasticsearch'
+    networks:
+      - wae
     build:
       context: .
       dockerfile: Dockerfile-elasticsearch
@@ -14,6 +16,7 @@ services:
     image: 'spring-app'
     networks:
       - voc_mail
+      - wae
     container_name: 'wae'
     depends_on:
       - elasticsearch
@@ -31,3 +34,4 @@ services:
 networks:
   voc_mail:
     external: true
+  wae:
