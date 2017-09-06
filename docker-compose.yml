@@ -4,7 +4,10 @@ services:
   elasticsearch:
     image: 'elasticsearch-marvel'
     networks:
-      - voc_mail
+      default:
+        external:
+          name:
+            - voc_mail
     container_name: 'elasticsearch'
     build:
       context: .
