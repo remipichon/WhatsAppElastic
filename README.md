@@ -23,7 +23,13 @@ docker-compose restart spring-app; docker-compose logs --tail 100 -f spring-app
 
 ````
 docker-compose build
+ docker network create --attachable --driver=overlay voc_mail 
 docker stack deploy -c docker-compose.yml wae
+````
+
+```` 
+docker service logs -f wae_spring-app
+
 ````
 
 ## Mock mail 
