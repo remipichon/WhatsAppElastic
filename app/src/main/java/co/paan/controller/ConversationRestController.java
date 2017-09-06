@@ -138,9 +138,12 @@ public class ConversationRestController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Conversation> get(@RequestParam(value = "conversationId") String conversationId){
-        Conversation conversation = conversationService.getById(conversationId);
-        return new ResponseEntity<Conversation>(conversation, HttpStatus.OK);
+    public ResponseEntity<? extends Object> get(@RequestParam(value = "conversationName") String conversationName){
+        Conversation conversation = conversationService.getByName(conversationName);
+        if(conversation == null)
+            return new ResponseEntity<String>("Conversation named "+conversationName+" cannot be found", HttpStatus.NOT_FOUND);
+        else
+            return new ResponseEntity<Conversation>(conversation, HttpStatus.OK);
     }
 
 

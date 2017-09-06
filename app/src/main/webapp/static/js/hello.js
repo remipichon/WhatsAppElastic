@@ -19,7 +19,13 @@ $(document).ready(function () {
         var args = Array.prototype.slice.call(arguments);
         args.unshift("TRACE : ");
         log.info.apply(this, args);
-    }
+    };
+
+
+    LayoutController.prototype.init();
+
+
+
     DatetimePickerService.prototype.initDatePicker();
     DatetimePickerService.prototype.initTimePicker();
     $("#draw-button").on("click", HighchartsService.prototype.initDrawHighcharts);

@@ -13,6 +13,7 @@ ConversationHelper = function () {
  */
 ConversationHelper.prototype.setConversationName = function (conversationName) {
     $("#filename h3").html(conversationName);
+    $("#header-conversation-name").html("Conversation " +conversationName);
     conversationNameStored = conversationName;
 }
 

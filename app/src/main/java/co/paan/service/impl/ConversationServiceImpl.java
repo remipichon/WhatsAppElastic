@@ -373,7 +373,12 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public Conversation getByName(String name){
-        return conversationCrudRepository.findByName(name).get(0);
+        List<Conversation> conversations = conversationCrudRepository.findByName(name);
+        if(conversations.isEmpty()){
+            return null;
+        } else {
+            return conversations.get(0); //actually, conversationName is unique
+        }
     }
 
     @Override

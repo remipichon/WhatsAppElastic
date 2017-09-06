@@ -295,6 +295,8 @@ HighchartsService.prototype.initDrawHighcharts = function () {
             setAll: true
         });
 
+        return statistique;
+
 
 }
 
