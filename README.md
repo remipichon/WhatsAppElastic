@@ -8,6 +8,15 @@ docker-compose build
 docker-compose up -d
 ````
 
+```` 
+MAILDEST=whatstat
+WEBHOOK=wae_spring-app/api/conversation/mailhook
+TYPE=file
+docker service update voc_mailin_mediation --env-add $MAILDEST=$WEBHOOK --env-add $MAILDEST_TYPE=$TYPE
+docker kill $(docker ps -q --filter "name=voc_mailin_mediation*")
+docker service logs -f voc_mailin_mediation
+````
+
 visit http://localhost:8080/static/index.html
 
 # Dev 
@@ -37,7 +46,6 @@ docker service logs -f wae_spring-app
 ````
 cd test
 cat whatspam_extra_light.txt | base64 > temp
-curl  -F "attachment=@temp" -F "mailinMsg=$(cat mailinMsg.json)"  "localhost:8080/api/conversation/mailhook"
 curl  -F TestFile=@"temp" -F mailinMsg=@"mailinMsg.json"  "localhost:8080/api/conversation/mailhook"
 rm temp
 ````

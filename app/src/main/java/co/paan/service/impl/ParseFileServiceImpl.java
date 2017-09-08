@@ -71,9 +71,9 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             String line = scanner.nextLine();
             lineRead++;
             post = processLine(line, conversation.getName());
-            if(startDate == null) startDate = post.getDate();
+            if(startDate == null && post != null) startDate = post.getDate();
             postCount += post != null ? 1 : 0;
-            if (postCount % feedbackStep == 0) {
+            if (lineRead % feedbackStep == 0) {
                 logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount);// + " of " + lineCount);
                 this.template.convertAndSend(webSocketChannel, new Progress(lineRead, post.getDate(), startDate)); //sending to the channel
 
