@@ -24,8 +24,6 @@ services:
     ports:
       - '8080:80'
       - '5005:5005'
-    volumes:
-     - './app/:/project/'
     environment:
      - PUBLIC_ACCESS=http://vps1.remip.eu:8080/static/index-mail.html
 
