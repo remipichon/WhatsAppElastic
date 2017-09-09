@@ -75,8 +75,9 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             postCount += post != null ? 1 : 0;
             if (lineRead % feedbackStep == 0) {
                 logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount);// + " of " + lineCount);
+            }
+            if (post != null && postCount % feedbackStep == 0) {
                 this.template.convertAndSend(webSocketChannel, new Progress(lineRead, post.getDate(), startDate)); //sending to the channel
-
             }
         }
         scanner.close();

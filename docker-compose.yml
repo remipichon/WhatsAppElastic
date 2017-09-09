@@ -3,21 +3,19 @@ version: '3'
 services:
   elasticsearch:
     image: 'elasticsearch-marvel'
-    container_name: 'elasticsearch'
     networks:
       - wae
     build:
       context: .
       dockerfile: Dockerfile-elasticsearch
     ports:
-      - '9300:9300'
-      - '9200:9200'
-  spring-app:
+      - '9300'
+      - '9200'
+  spring_app:
     image: 'spring-app'
     networks:
       - voc_mail
       - wae
-    container_name: 'wae'
     depends_on:
       - elasticsearch
     build:
@@ -25,11 +23,9 @@ services:
       dockerfile: Dockerfile-app
     ports:
       - '8080:80'
-      - '8081:8181'
       - '5005:5005'
-    #volumes:
-     #- '~/.gradle/:/root/.gradle'
-     #- './app:/project'
+    volumes:
+     - './app/:/project/'
 
 networks:
   voc_mail:
