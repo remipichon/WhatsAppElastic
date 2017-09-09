@@ -52,4 +52,6 @@ public interface ConversationService {
     Conversation getById(String id);
 
     String getRandomConversationName();
+
+    String getRandomConversationName(String prefix);
 }

@@ -4,8 +4,6 @@ import co.paan.entities.Post;
 import co.paan.repository.PostRepository;
 import co.paan.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,7 +16,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public Post save(Post post) {
-        postRepository.save(post);
+        post = postRepository.save(post);
         return post;
     }
 

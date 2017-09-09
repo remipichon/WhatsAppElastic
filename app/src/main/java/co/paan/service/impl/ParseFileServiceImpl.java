@@ -4,10 +4,12 @@ import co.paan.configuration.Channels;
 import co.paan.entities.Conversation;
 import co.paan.entities.Post;
 import co.paan.entities.Progress;
+import co.paan.rest.DTO.ReceivedMailInfo;
 import co.paan.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -38,15 +40,22 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
     private SecureRandom random = new SecureRandom();
 
-//    @Override
+    @Value("${PUBLIC_ACCESS}")
+    private String publicAccess;
+
+    @Autowired
+    EmailServiceImpl emailService;
+
+
+    //    @Override
     public void parseFile(InputStream inputStream, String fileName, String conversationName) {
         Conversation conversation = conversationService.create(conversationName);
-        parseFile(inputStream,conversation);
+        parseFile(inputStream,conversation, null);
     }
 
     @Async
 //    @Override
-    public void parseFile(InputStream inputStream, Conversation conversation) {
+    public void parseFile(InputStream inputStream, Conversation conversation, ReceivedMailInfo receivedMailInfo) {
         int postCount = 0;
         int lineCount = 0;
 
@@ -90,6 +99,25 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         this.template.convertAndSend(webSocketChannel, new Progress(-24, "","")); //sending to the channel
 
         logger.info("Done reading " + conversation.getName() + ": " + postCount + " post have been added from " + lineRead + " lines read");//with path " + file.getAbsolutePath());
+
+        //send mail with link to sender
+        if(publicAccess != null && publicAccess != "" && receivedMailInfo != null) {
+            logger.info("send an email to " + receivedMailInfo.getSenderEmail());
+            String responseSubject = "No subject", body = "No body";
+            String link = publicAccess + "#" + conversation.getName();
+            body = "Hello "+receivedMailInfo.getSenderName()+",\n\n\nYour chat is now ready, use the following link to play with your stats:\n\n" +
+                    link + "\n" +
+                    "Consider keeping this link as it will allow you to quickly access your stats without sending your chat once again. Though I don't mind, if you love sending emails.\n\n" +
+                    "Don't hesitate to pass WhatStat along if you liked .\n\n" +
+                    "Bien à vous, \nA piece of code nicely written by a cool guy";
+            responseSubject = "Your chat " + receivedMailInfo.getOriginalConversationName() + " is now ready";
+            logger.info("Sending email to " + receivedMailInfo.getSenderEmail() + ".\nSubject: " + responseSubject + "\nBody:\n" + body);
+
+            emailService.sendSimpleMessage(receivedMailInfo.getSenderEmail(), responseSubject, body);
+        } else {
+            logger.warn("PUBLIC_ACCESS env is not defined, no mail has been sent to the sender");
+        }
+
 
     }
 

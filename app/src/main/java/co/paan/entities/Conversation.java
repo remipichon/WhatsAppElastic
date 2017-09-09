@@ -13,9 +13,8 @@ import java.util.Date;
  */
 @Document(indexName = "conversation", type = "conversation", shards = 1, replicas = 0)
 public class Conversation {
-    @Id
-    private String id;
 
+    @Id
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
     private String name;
 

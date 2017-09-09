@@ -6,6 +6,8 @@
     <link href="css/whatsQuery.css" rel="stylesheet">
     <link href="css/spinner.css" rel="stylesheet">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
 
     <style type="text/css">
         [ng\:cloak], [ng-cloak], .ng-cloak {
@@ -36,21 +38,26 @@
                 <div class="text-center col-md-12">
                     <h4>How to send a Whatsapp chat to get stats</h4>
 
-                    <p>Send your conversation to <strong>whatstat@mail.remip.eu</strong></p>
+                    <p>Send your chat to <strong>whatstat@mail.remip.eu</strong>. The email's subject can be used to give a name to your chat'stats.</p>
 
                     <p><strong>There is no need to include your medias</strong> (5th bullet for the FAQ). Including medias limits to 10 000 lines whereas 40 000 lines can be sent without the medias. Moreover, Whatstat doesnt' care about your medias.</p>
 
-                    <p>After sending the email, you will right away receive a mail with a link to follow the parsing progress.</p>
+                    <p>After sending the email, you will right away receive a response with a link to follow the parsing progress.</p>
 
-                    <p>Your chat will be given a unique name to access your stats. Consider keeping it as it allows you to quickly access the stats. It only takes time to read a chat, not to compute stats.</p>
+                    <p>You will also receive an email once the parsing is done. </p>
 
-                    <p><a href="https://faq.whatsapp.com/en/android/23756533/?category=5245251">How to export a WhatsApp chat</a></p>
+                    <p>A link will be given to you to access your stats. Consider keeping it as it allows you to quickly access the stats. It only takes time to read the chat, not to compute the stats.</p>
+
+                    <p><a href="https://faq.whatsapp.com/en/android/23756533/?category=5245251">FAQ: How to export a WhatsApp chat</a></p>
 
                     <h4>How about my privacy and the privacy of the others in the chat ?</h4>
 
                     <p>Whatstat is not storing the actual content. The dates, who and how many characters only are kept.</p>
 
                     <p>Chat is sent from your email (up to you) to Whatstat mail server (25). Stats (without the actual content of your message) are retrieved over plain HTTP.</p>
+
+                    <p style="opacity: 0.09">In other words, it's not secure. HTTPS will soon be used to conserve your privacy. My server is prone to hacking and stuff though.</p>
+
 
                 </div>
             </div>
@@ -83,6 +90,8 @@
 
 
     <div id="charts" class="container-fluid">
+        <p class="text-center">Consider using landscape mode</p>
+
         <div class="row">
             <div id="user-bar-chart" class="col-md-12"></div>
         </div>

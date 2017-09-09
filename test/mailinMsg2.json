@@ -1,0 +1,95 @@
+{
+  "text": "--Remi Pichon",
+  "headers": {
+    "received": [
+      "by mail-io0-f171.google.com with SMTP id n69so7281167ioi.5 for whatstat@mail.remip.eu; Fri, 08 Sep 2017 15:16:29 -0700 (PDT)",
+      "by 10.79.110.147 with HTTP; Fri, 8 Sep 2017 15:16:06 -0700 (PDT)"
+    ],
+    "dkim-signature": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025; h=mime-version:from:date:message-id:subject:to; bh=dVQvkS/0nh8ZRRJw4PIDiZkFRUyutYUdpydkFzuzHOs=; b=NbONy1MlNUxvdpDZppU8BPg232Ztv8EMjsfBmdHJ6ztxbFanDI+m1UDfqsnOkjnajZ GH6KdyeH6ld52ZSNU0xNdzgsXwsM2+JbZe3szUhu3jmU0dOYK/ZhBRRBiDweEJadIhcL VVW7IVmrZf492kDyqHmVMMEUy8jTYvj7OPZONCAD6DMIXI0dyn9hCSBYggTQD6WY8K8S nPSIT1pJAHroTUfG0wB41Jj/+nbvVwYs7+L8/DNjOcsQSJrwgMFFo8+854bXP0dFwAdg vBjmthSlLneWpd2Ooyw4l9NLdBQNH3c1U/7Pm7AxmSYvHJ1fTIo90/lDDcJYUdYV0ZbH xTiQ==",
+    "x-google-dkim-signature": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20161025; h=x-gm-message-state:mime-version:from:date:message-id:subject:to; bh=dVQvkS/0nh8ZRRJw4PIDiZkFRUyutYUdpydkFzuzHOs=; b=QViE5Mfj6o4ygY+hH9Bm8o1mMhu/P2EhEU+B3xoCK5enbSnzyJPN7ekWdZEoyAPRq2 c6Mhf/3ug17h1BuUuQnwf99QeBLo1s6dOfKfeynMWk0LQNW8LVt78Zb9XewC44gc9Dhv zfutcopgp9V6CdUDWcB3U1lt6kXlaRZw0DXiThpmVPX9WUUW3N4pyIdZLszU5434wSnJ aU5QZr3KBcQslBGgAc1kXD2AOUwmoN78jmeF9447kTuBGP8cHvgUji3YJK18ZGn8vFc0 AEeyUFZ+6CMEYFcL2yaVXEMnR3v+j9f32gC4vu+nLmxzAk1xieQo7mUXCwlMaQT+AU/E xAVg==",
+    "x-gm-message-state": "AHPjjUjl1ZpDqKqC3Cr/tavRVx8BjlqprZyURe+10/uChUmDhXpkwg9V ODnx1styYZyA2t8xTRL0Qct/kT0myQ==",
+    "x-google-smtp-source": "AOwi7QD7k47gnDMJSkbjRBVuoEKj61FvqVYkxzdEHoBZbyIYPoTbpAoZ65Qq4nVOfjRzFvYxxnfS1wAUQOloYa9Vznw=",
+    "x-received": "by 10.107.21.133 with SMTP id 127mr5518224iov.209.1504908987096; Fri, 08 Sep 2017 15:16:27 -0700 (PDT)",
+    "mime-version": "1.0",
+    "from": "Rémi Pichon pichon.remi.pr@gmail.com",
+    "date": "Sat, 9 Sep 2017 00:16:06 +0200",
+    "message-id": "CAHwpz4EqtNFBZQFTqexjJ7i40BOGcTuvwL-s3BN4S92k8tBeZA@mail.gmail.com",
+    "subject": "cest lobject",
+    "to": "whatstat@mail.remip.eu",
+    "content-type": "multipart/alternative; boundary=94eb2c05cb149885c20558b4ed84"
+  },
+  "subject":"Mon supet chat",
+  "messageId": "CAHwpz4EqtNFBZQFTqexjJ7i40BOGcTuvwL-s3BN4S92k8tBeZA@mail.gmail.com",
+  "priority": "normal",
+  "from": [
+    {
+      "address": "pichon.remi.pr@gmail.com",
+      "name": "Rémi Pichon"
+    }
+  ],
+  "to": [
+    {
+      "address": "whatstat@mail.remip.eu",
+      "name": ""
+    }
+  ],
+  "date": "2017-09-08T22:16:06.000Z",
+  "receivedDate": "2017-09-08T22:16:29.000Z",
+  "dkim": "pass",
+  "spf": "failed",
+  "spamScore": 0,
+  "language": "czech",
+  "cc": [],
+  "attachments": [
+    {
+      "contentType": "text/x-markdown",
+      "charset": "utf-8",
+      "fileName": "attachment",
+      "contentDisposition": "attachment",
+      "transferEncoding": "base64",
+      "generatedFileName": "TestFile",
+      "contentId": "1e290ac8433d555bce009b162cb869d0@mailparser",
+      "checksum": "0dd22bfc3ec803f3459e1544ab9f51ec",
+      "length": 11972
+    }
+  ],
+  "connection": {
+    "id": "57e2af55-bc70-4701-b27b-1dd0a5243b32",
+    "remoteAddress": "10.255.0.2",
+    "remotePort": 38356,
+    "clientHostname": "[10.255.0.2]",
+    "openingCommand": "EHLO",
+    "hostNameAppearsAs": "mail-io0-f171.google.com",
+    "xClient": {},
+    "xForward": {},
+    "transmissionType": "ESMTPS",
+    "tlsOptions": {
+      "name": "ECDHE-RSA-AES128-GCM-SHA256",
+      "version": "TLSv1/SSLv3"
+    },
+    "envelope": {
+      "mailFrom": {
+        "address": "pichon.remi.pr@gmail.com",
+        "args": false
+      },
+      "rcptTo": [
+        {
+          "address": "whatstat@mail.remip.eu",
+          "args": false
+        }
+      ]
+    },
+    "transaction": 1,
+    "mailPath": ".tmp/57e2af55-bc70-4701-b27b-1dd0a5243b32"
+  },
+  "envelopeFrom": {
+    "address": "pichon.remi.pr@gmail.com",
+    "args": false
+  },
+  "envelopeTo": [
+    {
+      "address": "whatstat@mail.remip.eu",
+      "args": false
+    }
+  ]
+}

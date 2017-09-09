@@ -1,13 +1,15 @@
 {
   "text": "-- Remi Pichon ",
   "priority": "normal",
-  "from": [{
-    "address": "john.doe@yopmail.com",
-    "name": ""
-  }],
+  "from": [
+    {
+      "address": "john.doe@yopmail.com",
+      "name": ""
+    }
+  ],
   "to": [
     {
-      "address": "test@mail.remip.eu",
+      "address": "whatstat@mail.remip.eu",
       "name": ""
     }
   ],
