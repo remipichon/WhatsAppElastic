@@ -2,6 +2,7 @@ package co.paan.controller;
 
 import co.paan.entities.Conversation;
 import co.paan.entities.Post;
+import co.paan.entities.Progress;
 import co.paan.rest.DTO.ReceivedMailInfo;
 import co.paan.service.impl.ConversationServiceImpl;
 import co.paan.service.impl.EmailServiceImpl;
@@ -208,6 +209,27 @@ public class ConversationRestController {
         elasticsearchTemplate.putMapping(Post.class);
         elasticsearchTemplate.refresh(Post.class, true);
     }
+
+    //TODO DEBUG ONLY
+    @RequestMapping("deleteAll")
+    @Deprecated
+    public void deleteAll() {
+        elasticsearchTemplate.deleteIndex(Conversation.class);
+        elasticsearchTemplate.deleteIndex(Progress.class);
+        elasticsearchTemplate.deleteIndex(Post.class);
+        elasticsearchTemplate.createIndex(Conversation.class);
+        elasticsearchTemplate.createIndex(Progress.class);
+        elasticsearchTemplate.createIndex(Post.class);
+        elasticsearchTemplate.putMapping(Conversation.class);
+        elasticsearchTemplate.putMapping(Progress.class);
+        elasticsearchTemplate.putMapping(Post.class);
+        elasticsearchTemplate.refresh(Conversation.class, true);
+        elasticsearchTemplate.refresh(Progress.class, true);
+        elasticsearchTemplate.refresh(Post.class, true);
+    }
+
+    //TODO
+    //deleteAll
 
 
     @RequestMapping("getExistingConversationName")
