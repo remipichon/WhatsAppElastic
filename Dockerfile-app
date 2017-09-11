@@ -17,9 +17,13 @@ ENV PATH $PATH:$GRADLE_HOME/bin
 # Caches
 #VOLUME ["/root/.gradle"]
 
-COPY app /project
+# Cache dependencies
+COPY app/build.gradle /project/build.gradle
+RUN cd /project; gradle dependencies
 
-RUN cd /project; gradle build
+# Build app
+COPY app /project
+#RUN cd /project; gradle build --offline
 
 EXPOSE 5005
 EXPOSE 80
@@ -29,7 +33,7 @@ EXPOSE 80
 
 #CMD java -Dserver.port=80 -jar /project/build/libs/spring-boot-wae-0.1.0.jar
 #CMD cd /project && gradle build && java -Dserver.port=80 -jar build/libs/spring-boot-wae-0.1.0.jar
-CMD cd /project && gradle bootRun
+CMD cd /project && gradle bootRun --offline
 
 
 
