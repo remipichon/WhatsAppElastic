@@ -66,7 +66,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
         if(decodedInputStream != null)
          lineCount = this.countLines(decodedInputStream);
-
+        logger.info("Will be read", lineCount,"lines");
 
         int feedbackStep = lineCount / 100;
         int lineRead = 0;
@@ -80,10 +80,10 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             post = processLine(line, conversation.getName());
             if(startDate == null && post != null) startDate = post.getDate();
             postCount += post != null ? 1 : 0;
-            if (lineRead % feedbackStep == 0) {
+            if (feedbackStep == 0 || lineRead % feedbackStep == 0 ) {
                 logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount, "of",lineCount,"lignes");// + " of " + lineCount);
             }
-            if (post != null && postCount % feedbackStep == 0) {
+            if (feedbackStep == 0 || post != null && postCount % feedbackStep == 0) {
                 this.template.convertAndSend(webSocketChannel, new Progress(lineRead, lineCount)); //sending to the channel
             }
         }

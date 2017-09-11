@@ -33,7 +33,7 @@ EXPOSE 80
 
 #CMD java -Dserver.port=80 -jar /project/build/libs/spring-boot-wae-0.1.0.jar
 #CMD cd /project && gradle build && java -Dserver.port=80 -jar build/libs/spring-boot-wae-0.1.0.jar
-CMD cd /project && gradle bootRun --offline
+CMD cd /project && gradle bootRun
 
 
 

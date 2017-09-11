@@ -61,26 +61,22 @@ LayoutController.prototype.initWebsocket = function(conversationName){
 
             log.info(destination,loadProgress);
 
-            var ESformat = "YYYY-MM-dd";
-            var startDate = new moment(loadProgress.startDate, ESformat);
-            var currentDate = new moment(loadProgress.currentParseDate, ESformat);
-            var endDate = new moment();
+            var lineCount = loadProgress.lineCount;
             var lineRead = loadProgress.lineRead;
 
-            var wholeDateSpan = endDate.diff(startDate);
-            var alreadyDone = currentDate.diff(startDate);
-            var percentage = alreadyDone / wholeDateSpan;
+
+            var percentage = parseInt(lineRead / lineCount * 100);
 
 
-            log.info("destination progress", startDate, endDate, currentDate, lineRead, percentage);
+            log.info("destination progress", lineCount, lineRead, percentage);
 
             $("#line-read-count").html(lineRead);
 
-            var percentageProgress = (percentage)*100+"%";
+            var percentageProgress = (percentage)+"%";
 
 
             $("#parse-file-progress-bar").css("width", percentageProgress);
-            console.log(' progress bar' + (loadProgress.value/loadProgress.total)*100+"%");
+            console.log(' progress bar' + percentage+"%");
             $("#parse-file-progress-bar span").html(percentageProgress);
 
 
