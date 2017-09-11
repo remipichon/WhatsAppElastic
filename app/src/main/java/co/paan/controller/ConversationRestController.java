@@ -92,7 +92,7 @@ public class ConversationRestController {
         JSONObject mailingMsgJson = new JSONObject(jsonString);
         String fromMail = mailingMsgJson.getJSONArray("from").getJSONObject(0).getString("address");
         String fromName = mailingMsgJson.getJSONArray("from").getJSONObject(0).getString("name");
-        logger.info("Mail has been send by " + fromName + " with email " + fromMail);
+        logger.info("Mail has been sent by " + fromName + " with email " + fromMail);
 
         //read attachment
         JSONArray attachments = mailingMsgJson.getJSONArray("attachments");
@@ -110,8 +110,10 @@ public class ConversationRestController {
             return new ResponseEntity<>("Required request part '"+fileName+"' is not present.",HttpStatus.BAD_REQUEST);
         }
         InputStream decodedInputStream = null;
+        InputStream otherDecodedInputStream = null;
         try {
             decodedInputStream = Base64.getMimeDecoder().wrap(file.getInputStream());
+            otherDecodedInputStream = Base64.getMimeDecoder().wrap(file.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -160,7 +162,7 @@ public class ConversationRestController {
         }
 
         //read conversation async and parse it to ES async
-        fileService.parseFile(decodedInputStream, conversation, new ReceivedMailInfo(subject,fromName, fromMail));
+        fileService.parseFile(decodedInputStream, otherDecodedInputStream, conversation, new ReceivedMailInfo(subject,fromName, fromMail));
 
         //return result (without waiting for the parse to be done)
         return new ResponseEntity<String>("Mail from " + fromMail + " is being parsed into " + conversation.getName() +". Get parse feedback with Websocket channel "+ fileService.getWebSocketChannel(conversation.getName()),HttpStatus.OK);

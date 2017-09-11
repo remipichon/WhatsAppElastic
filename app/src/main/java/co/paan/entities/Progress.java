@@ -4,28 +4,28 @@ package co.paan.entities;
  * Created by remi on 12/10/15.
  */
 public class Progress {
-    private String lineRead;
-    private String currentParseDate;
-    private String startDate;
+    private Integer lineRead;
+    private Integer lineCount;
 
-    public Progress() {
+
+    public Progress(Integer lineRead, Integer lineCount) {
+        this.lineRead = lineRead;
+        this.lineCount = lineCount;
     }
 
-    public Progress(Integer lineRead, String currentParseDate, String startDate) {
-        this.lineRead = String.valueOf(lineRead);
-        this.currentParseDate = currentParseDate;
-        this.startDate = startDate;
-    }
-
-    public String getLineRead() {
+    public Integer getLineRead() {
         return lineRead;
     }
 
-    public String getCurrentParseDate() {
-        return currentParseDate;
+    public void setLineRead(Integer lineRead) {
+        this.lineRead = lineRead;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public Integer getLineCount() {
+        return lineCount;
+    }
+
+    public void setLineCount(Integer lineCount) {
+        this.lineCount = lineCount;
     }
 }

@@ -50,12 +50,12 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
     //    @Override
     public void parseFile(InputStream inputStream, String fileName, String conversationName) {
         Conversation conversation = conversationService.create(conversationName);
-        parseFile(inputStream,conversation, null);
+        parseFile(inputStream,null,conversation, null);
     }
 
     @Async
 //    @Override
-    public void parseFile(InputStream inputStream, Conversation conversation, ReceivedMailInfo receivedMailInfo) {
+    public void parseFile(InputStream decodedInputStream, InputStream inputStream, Conversation conversation, ReceivedMailInfo receivedMailInfo) {
         int postCount = 0;
         int lineCount = 0;
 
@@ -64,29 +64,27 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 
         logger.info("websocket channel " + webSocketChannel);
 
-        //lineCount = this.countLines(inputStream); //ce truc fuck up the inputstream...
+        if(decodedInputStream != null)
+         lineCount = this.countLines(decodedInputStream);
 
 
-        int feedbackStep = 1;//lineCount / 100;
+        int feedbackStep = lineCount / 100;
         int lineRead = 0;
         String startDate = null;
         Post post;
         Scanner scanner = new Scanner(inputStream);
         logger.info("Start reading " + conversation.getName());// + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
-            if(lineRead > 100) feedbackStep = 100;
-            if(lineRead > 1000) feedbackStep = 1000;
-            //if(lineRead > 10000) feedbackStep = 10000;
             String line = scanner.nextLine();
             lineRead++;
             post = processLine(line, conversation.getName());
             if(startDate == null && post != null) startDate = post.getDate();
             postCount += post != null ? 1 : 0;
             if (lineRead % feedbackStep == 0) {
-                logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount);// + " of " + lineCount);
+                logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount, "of",lineCount,"lignes");// + " of " + lineCount);
             }
             if (post != null && postCount % feedbackStep == 0) {
-                this.template.convertAndSend(webSocketChannel, new Progress(lineRead, post.getDate(), startDate)); //sending to the channel
+                this.template.convertAndSend(webSocketChannel, new Progress(lineRead, lineCount)); //sending to the channel
             }
         }
         scanner.close();
@@ -96,7 +94,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         conversationService.setParsed(conversation);
 
         //TODO envoyer autre que chose que -24
-        this.template.convertAndSend(webSocketChannel, new Progress(-24, "","")); //sending to the channel
+        this.template.convertAndSend(webSocketChannel, new Progress(-24, lineCount)); //sending to the channel
 
         logger.info("Done reading " + conversation.getName() + ": " + postCount + " post have been added from " + lineRead + " lines read");//with path " + file.getAbsolutePath());
 
