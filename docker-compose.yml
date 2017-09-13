@@ -22,10 +22,9 @@ services:
       context: .
       dockerfile: Dockerfile-app
     ports:
-      - '8080:80'
-      - '5005:5005'
+      - '80'
     environment:
-     - PUBLIC_ACCESS=http://vps1.remip.eu:8080/static/index-mail.html
+     - PUBLIC_ACCESS=http://whatstat.remip.eu
 
 networks:
   voc_mail:
