@@ -16,6 +16,7 @@ services:
     networks:
       - voc_mail
       - wae
+      - voc_network
     depends_on:
       - elasticsearch
     build:
@@ -29,5 +30,7 @@ services:
 
 networks:
   voc_mail:
+    external: true
+  voc_network:
     external: true
   wae:
