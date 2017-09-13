@@ -26,7 +26,7 @@ services:
       - '80'
     environment:
      - PUBLIC_ACCESS=http://whatstat.remip.eu
-     - VIRTUAL_HOST=http://whatstat.remip.eu #for nginx-proxy
+     - VIRTUAL_HOST=whatstat.remip.eu #for nginx-proxy
 
 networks:
   voc_mail:
