@@ -16,7 +16,7 @@ HighchartsService.prototype.drawUserBarChart = function (statistique) {
             type: 'bar'
         },
         title: {
-            text: 'Messages and content per user'
+            text: 'Number of messages and letters per user'
         },
         xAxis: {
             categories: enumName
@@ -25,15 +25,15 @@ HighchartsService.prototype.drawUserBarChart = function (statistique) {
         yAxis: [{
             min: 0,
             title: {
-                text: 'Messages'
+                text: 'Total message count'
             }
         }, {
             title: {
-                text: 'Content per message'
+                text: 'Average letter count per message'
             }
         }, {
             title: {
-                text: 'Content (nb caracters)'
+                text: 'Total letter count'
             }
         }],
         legend: {
@@ -50,7 +50,7 @@ HighchartsService.prototype.drawUserBarChart = function (statistique) {
             }
         },
         series: [{
-            name: 'Messages sent',
+            name: 'Total message count',
             color: 'rgba(124, 181, 236,0.7)',
             data: _.values(numberMessagePerUser),
             pointPadding: 0.2,
@@ -58,14 +58,14 @@ HighchartsService.prototype.drawUserBarChart = function (statistique) {
             yAxis: 0
         },
             {
-                name: 'Average content char per message typed',
+                name: 'Average letter count per message',
                 color: 'rgba(209, 50, 144, 0.3)',
                 data: _.values(numberCharacterPerMessagePerUser),
                 pointPadding: 0.3,
                 pointPlacement: -0.2,
                 yAxis: 1
             }, {
-                name: 'Total content typed',
+                name: 'Total letter count',
                 color: 'rgba(144, 237, 125,0.7);',
                 data: _.values(totalContentPerUser),
                 pointPadding: 0.4,
@@ -91,7 +91,7 @@ HighchartsService.prototype.drawContentUserPieChart = function (statistique) {
             plotShadow: false
         },
         title: {
-            text: 'Content per users'
+            text: 'Number of letters per user'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -111,7 +111,7 @@ HighchartsService.prototype.drawContentUserPieChart = function (statistique) {
         },
         series: [{
             type: 'pie',
-            name: 'Number caracteres sent',
+            name: 'Total letters count',
             data: _.map(statContentMessagePerUser, function (num, key) {
                 return [key, num];
             })
@@ -134,7 +134,7 @@ HighchartsService.prototype.drawMessageUserPieChart = function (statistique) {
             plotShadow: false
         },
         title: {
-            text: 'Message sent per users'
+            text: 'Number of messages per user'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -187,7 +187,7 @@ HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique)
 
     $('#user-bar-chart-timeline').highcharts({
         title: {
-            text: 'Message per user per month',
+            text: 'Number of messages per user per month',
             x: -20 //center
         },
         xAxis: {
@@ -204,7 +204,7 @@ HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique)
             }]
         },
         tooltip: {
-            valueSuffix: 'messages'
+            valueSuffix: ' messages'
         },
         legend: {
             layout: 'vertical',
@@ -238,7 +238,7 @@ HighchartsService.prototype.drawMessageBarChartTimelineMonth = function (statist
 
     $('#user-bar-chart-timeline-month').highcharts({
         title: {
-            text: 'Message per user per day',
+            text: 'Number of messages per user per day',
             x: -20 //center
         },
         xAxis: {
@@ -255,7 +255,7 @@ HighchartsService.prototype.drawMessageBarChartTimelineMonth = function (statist
             }]
         },
         tooltip: {
-            valueSuffix: 'messages'
+            valueSuffix: ' messages'
         },
         legend: {
             layout: 'vertical',
