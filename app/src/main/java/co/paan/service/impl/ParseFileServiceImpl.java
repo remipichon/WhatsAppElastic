@@ -84,7 +84,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             if(startDate == null && post != null) startDate = post.getDate();
             if(post != null) endDate = post.getDate();
             postCount += post != null ? 1 : 0;
-            if (feedbackStep == 0 || lineRead % feedbackStep == 0 ) {
+            if (feedbackStep == 0 || lineRead % (feedbackStep * 10) == 0 ) { //*3 to get less logs
                 logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount, "of",lineCount,"lignes");// + " of " + lineCount);
             }
             if (feedbackStep == 0 || post != null && postCount % feedbackStep == 0) {
