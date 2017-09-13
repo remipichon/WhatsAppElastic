@@ -33,7 +33,7 @@ LayoutController.prototype.init = function(){
             console.log('data from /api/conversation?conversationName='+conversationName,data);
 
             if (data.parsed) {
-                this.drawChart();
+                this.drawChart(data);
             } else {
                 this.initWebsocket(data.name)
             }
@@ -95,11 +95,12 @@ LayoutController.prototype.initWebsocket = function(conversationName){
 };
 
 
-LayoutController.prototype.drawChart = function(){
+LayoutController.prototype.drawChart = function(conversation){
     var statistique = HighchartsService.prototype.initDrawHighcharts()
     HighchartsService.prototype.drawHighcharts(statistique);
     this.show(Layout.charts);
     this.hide(Layout.feedback);
+    $("#from-to").html("From " + new moment(conversation.startDate).format("Do MMMM YYYY") + " to " + new moment(conversation.endDate).format("Do MMMM YYYY"));
 };
 
 LayoutController.prototype.hide = function(target){

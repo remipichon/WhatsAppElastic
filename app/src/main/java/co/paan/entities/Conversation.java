@@ -22,6 +22,12 @@ public class Conversation {
     @Field(type = FieldType.Date)
     private Date creationDate;
 
+    @Field(type = FieldType.Date)
+    private Date startDate;
+
+    @Field(type = FieldType.Date)
+    private Date endDate;
+
     @Field(type = FieldType.Boolean)
     private Boolean isParsed = false;
 
@@ -36,6 +42,22 @@ public class Conversation {
     public Conversation(String name, Date creationDate, Integer postCount) {
         this.name = name;
         this.creationDate = creationDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public String getName() {

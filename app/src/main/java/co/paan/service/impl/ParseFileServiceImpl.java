@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,6 +73,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         int feedbackStep = lineCount / 100;
         int lineRead = 0;
         String startDate = null;
+        String endDate = null;
         Post post;
         Scanner scanner = new Scanner(inputStream);
         logger.info("Start reading " + conversation.getName());// + lineCount + " lines of file");
@@ -79,6 +82,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             lineRead++;
             post = processLine(line, conversation.getName());
             if(startDate == null && post != null) startDate = post.getDate();
+            if(post != null) endDate = post.getDate();
             postCount += post != null ? 1 : 0;
             if (feedbackStep == 0 || lineRead % feedbackStep == 0 ) {
                 logger.info("Reading " + conversation.getName() + ": read line " +lineRead + " post count "+postCount, "of",lineCount,"lignes");// + " of " + lineCount);
@@ -92,8 +96,14 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         lineCount = lineRead;
 
         conversationService.setParsed(conversation);
+        try {
+            conversation.setStartDate(new SimpleDateFormat("yyyy-MM-dd").parse(startDate));
+            conversation.setEndDate(new SimpleDateFormat("yyyy-MM-dd").parse(endDate));
+            conversationService.conversationCrudRepository.save(conversation);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        //TODO envoyer autre que chose que -24
         this.template.convertAndSend(webSocketChannel, new Progress(-24, lineCount)); //sending to the channel
 
         logger.info("Done reading " + conversation.getName() + ": " + postCount + " post have been added from " + lineRead + " lines read");//with path " + file.getAbsolutePath());
