@@ -14,27 +14,23 @@ services:
   spring_app:
     image: 'spring-app'
     networks:
-#      - voc_mail
+      - voc_mail
       - wae
-#      - voc_network
+      - voc_network
     depends_on:
       - elasticsearch
     build:
       context: .
       dockerfile: Dockerfile-app
     ports:
-      - '8080:80'
       - '5005:5005'
     environment:
      - PUBLIC_ACCESS=http://whatstat.remip.eu
      - VIRTUAL_HOST=whatstat.remip.eu #for nginx-proxy
-    volumes:
-     - '~/.gradle/:/root/.gradle'
-     - './app/:/project/'
 
 networks:
-#  voc_mail:
-#    external: true
-#  voc_network:
-#    external: true
+  voc_mail:
+    external: true
+  voc_network:
+    external: true
   wae:

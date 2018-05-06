@@ -7,8 +7,8 @@ Produce stats from a WhatsApp chat.
 
 ## build deploy
 ````
-docker-compose build
-docker stack deploy -c docker-compose.yml wae
+docker-compose -f docker-compose.wae.yml build
+docker stack deploy -c docker-compose.wae.yml wae
 ````
 
 ## configure mailin mediation (VOC)
@@ -42,6 +42,7 @@ docker kill $(docker ps -q --filter "name=wae_spring_app*")
 * get the logs
 ```` 
 docker service logs -f wae_spring_app
+docker logs -f $(docker ps -q --filter "name=wae_spring_app*")
 ````
 
 * debug 
