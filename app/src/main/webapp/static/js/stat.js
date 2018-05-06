@@ -128,6 +128,25 @@ function _StatistiqueService(options) {
                     self.enumName.push(value);
                 });
 
+                var mapped = _.map(self.numberMessagePerUser, function(count, name){ return {count: count, name: name} });
+                var sortedByMessageCount = _.sortBy(mapped,function(item){return (-1) * item.count});
+
+                var numberMessagePerUser = {};
+                var numberCharacterPerMessagePerUser = {};
+                var totalContentPerUser = {};
+                var enumName = [];
+                sortedByMessageCount.forEach(function(userCount){
+                    numberMessagePerUser[userCount.name] = userCount.count;
+                    numberCharacterPerMessagePerUser[userCount.name] = parseInt(occurences[userCount.name].content_avg);
+                    totalContentPerUser[userCount.name] = occurences[userCount.name].content_sum;
+                    enumName.push(userCount.name);
+                });
+
+                self.numberMessagePerUser = numberMessagePerUser;
+                self.numberCharacterPerMessagePerUser = numberCharacterPerMessagePerUser;
+                self.totalContentPerUser = totalContentPerUser;
+                self.enumName = enumName;
+
                 highchartsService.drawUserBarChart(statistique);
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -157,6 +176,23 @@ function _StatistiqueService(options) {
 
                 self.statContentMessagePerUser = self.sortObject(self.statContentMessagePerUser);
                 self.statNumberMessagePerUser = self.sortObject(self.statNumberMessagePerUser);
+
+
+                statistique.colors.statContentMessagePerUser = [];
+                statistique.colors.statNumberMessagePerUser = [];
+
+                //TODO 'sort' statContentMessagePerUser by enumName
+                //TODO 'sort' statNumberMessagePerUser by enumName
+
+                var colors =  ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
+                    '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
+
+                var nameColorSorted = [];
+                for(var i = 0; i++; i < self.enumName.length){
+                    var name = self.enumName[i];
+                    nameColorSorted.push({name: name, color: colors[i % colors.length]})
+                }
+
 
                 highchartsService.drawMessageUserPieChart(statistique);
                 highchartsService.drawContentUserPieChart(statistique);
