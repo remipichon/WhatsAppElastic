@@ -16,7 +16,7 @@ HighchartsService.prototype.drawUserBarChart = function (statistique) {
             type: 'bar'
         },
         title: {
-            text: 'Number of messages and letters per user'
+            text: 'Message and letter count per user'
         },
         xAxis: {
             categories: enumName
@@ -47,7 +47,7 @@ HighchartsService.prototype.drawUserBarChart = function (statistique) {
                 grouping: false,
                 shadow: false,
                 borderWidth: 0
-            }
+            },
         },
         series: [{
             name: 'Total message count',
@@ -79,7 +79,7 @@ HighchartsService.prototype.drawUserBarChart = function (statistique) {
 
 HighchartsService.prototype.drawContentUserPieChart = function (statistique) {
 
-    var statContentMessagePerUser = statistique.getStatContentMessagePerUser()
+    var statContentMessagePerUser = statistique.getStatContentMessagePerUser();
 
     var $chart = $('#user-content-pie-chart');
     if (typeof $chart.highcharts() !== "undefined") $chart.highcharts().destroy();
@@ -91,7 +91,7 @@ HighchartsService.prototype.drawContentUserPieChart = function (statistique) {
             plotShadow: false
         },
         title: {
-            text: 'Number of letters per user'
+            text: 'Letter count per user'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -106,7 +106,8 @@ HighchartsService.prototype.drawContentUserPieChart = function (statistique) {
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
-                }
+                },
+                colors: statistique.colors.statContentMessagePerUser
             }
         },
         series: [{
@@ -134,7 +135,7 @@ HighchartsService.prototype.drawMessageUserPieChart = function (statistique) {
             plotShadow: false
         },
         title: {
-            text: 'Number of messages per user'
+            text: 'Message count per user'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -151,7 +152,8 @@ HighchartsService.prototype.drawMessageUserPieChart = function (statistique) {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
 
                     }
-                }
+                },
+                colors: statistique.colors.statNumberMessagePerUser
             }
         },
         series: [{
@@ -187,7 +189,7 @@ HighchartsService.prototype.drawMessageBarChartTimeline = function (statistique)
 
     $('#user-bar-chart-timeline').highcharts({
         title: {
-            text: 'Number of messages per user per month',
+            text: 'Message count per user per month on ' + statistique.year,
             x: -20 //center
         },
         xAxis: {
@@ -238,13 +240,14 @@ HighchartsService.prototype.drawMessageBarChartTimelineMonth = function (statist
 
     $('#user-bar-chart-timeline-month').highcharts({
         title: {
-            text: 'Number of messages per user per day',
+            text: 'Message count per user per day on ' + statistique.year,
             x: -20 //center
         },
         xAxis: {
             categories: categories
         },
         yAxis: {
+            min: 0,
             title: {
                 text: 'Nb messages'
             },
