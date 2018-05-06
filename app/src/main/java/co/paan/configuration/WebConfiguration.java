@@ -10,5 +10,6 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     public void addViewControllers(final ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/static/index-mail.html");
+        registry.addViewController("/legacy").setViewName("forward:/static/index.html");
     }
 }

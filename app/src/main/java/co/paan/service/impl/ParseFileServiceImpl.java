@@ -62,20 +62,24 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
         int lineCount = 0;
 
         String webSocketChannel = getWebSocketChannel(conversation.getName());
-
+        Scanner scanner;
 
         logger.info("websocket channel " + webSocketChannel);
 
-        if(decodedInputStream != null)
-         lineCount = this.countLines(decodedInputStream);
-        logger.info("Will be read", lineCount,"lines");
+        if(decodedInputStream != null && inputStream != null) {
+            lineCount = this.countLines(decodedInputStream);
+            logger.info("Will be read " + lineCount + " lines");
+            scanner = new Scanner(inputStream);
+        } else {
+            logger.info("Feedback unavailable");
+            scanner = new Scanner(decodedInputStream);
+        }
 
         int feedbackStep = lineCount / 100;
         int lineRead = 0;
         String startDate = null;
         String endDate = null;
         Post post;
-        Scanner scanner = new Scanner(inputStream);
         logger.info("Start reading " + conversation.getName());// + lineCount + " lines of file");
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();

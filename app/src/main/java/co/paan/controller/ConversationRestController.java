@@ -60,7 +60,7 @@ public class ConversationRestController {
                 try {
 
                     InputStream inputStream = file.getInputStream();
-                    fileService.parseFile(inputStream, conversationName,null);
+                    fileService.parseFile(inputStream, null,conversationName);
                     return new ResponseEntity<>("Websocket is no more available for UI based conversation",HttpStatus.OK);
 
 
