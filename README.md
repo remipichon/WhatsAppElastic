@@ -10,6 +10,7 @@ Produce stats from a WhatsApp chat.
 docker-compose -f docker-compose.wae.yml build
 docker stack deploy -c docker-compose.wae.yml wae
 ````
+| use docker-compose.yml for dev purposes
 
 ## configure mailin mediation (VOC)
 ```` 
