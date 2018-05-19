@@ -59,7 +59,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
 //    @Override
     public void parseFile(InputStream decodedInputStream, InputStream inputStream, Conversation conversation, ReceivedMailInfo receivedMailInfo) {
         int postCount = 0;
-        int lineCount = 0;
+        int lineCount;
 
         String webSocketChannel = getWebSocketChannel(conversation.getName());
         Scanner scanner;
@@ -71,6 +71,7 @@ public class ParseFileServiceImpl {//} implements ParseFileService {
             logger.info("Will be read " + lineCount + " lines");
             scanner = new Scanner(inputStream);
         } else {
+            lineCount = 10000; //just to get a few logs at least
             logger.info("Feedback unavailable");
             scanner = new Scanner(decodedInputStream);
         }
