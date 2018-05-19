@@ -45,6 +45,13 @@ LayoutController.prototype.init = function(){
         },this)
     });
 
+  $(".previous-year").on("click", function () {
+    LayoutController.prototype.setYear(LayoutController.prototype.enum.year.PREV)
+  });
+  $(".next-year").on("click", function () {
+    LayoutController.prototype.setYear(LayoutController.prototype.enum.year.NEXT)
+  });
+
 };
 
 LayoutController.prototype.initWebsocket = function(conversationName){
@@ -96,11 +103,13 @@ LayoutController.prototype.initWebsocket = function(conversationName){
 
 
 LayoutController.prototype.drawChart = function(conversation){
-    var statistique = HighchartsService.prototype.initDrawHighcharts()
+    HighchartsService.prototype.initDrawHighcharts(conversation); //export statistique to global scope
+    this.setYear(this.enum.year.LAST);
     HighchartsService.prototype.drawHighcharts(statistique);
     this.show(Layout.charts);
     this.hide(Layout.feedback);
-    $("#from-to").html("From " + new moment(conversation.startDate).format("Do MMMM YYYY") + " to " + new moment(conversation.endDate).format("Do MMMM YYYY"));
+    $("#from-to").html("From " + new moment(statistique.startDate).format("Do MMMM YYYY") + " to " + new moment(statistique.endDate).format("Do MMMM YYYY"));
+
 };
 
 LayoutController.prototype.hide = function(target){
@@ -111,9 +120,62 @@ LayoutController.prototype.show = function(target){
     $("#"+target).show();
 };
 
+LayoutController.prototype.enum = {};
+LayoutController.prototype.enum.year = {
+  "LAST": 0,
+  "NEXT": 1,
+  "PREV": -1
+};
+
+LayoutController.prototype.setYear = function (action) {
+  var selectedYear = new moment(statistique.selectedYear);
+  if (!selectedYear) action = this.enum.year.LAST;
+
+  if (action == this.enum.year.LAST) {
+    statistique.selectedYear = statistique.endDate;
+  } else if (action == this.enum.year.NEXT) {
+    if (selectedYear.year() + 1 > statistique.endDate.year() )
+      statistique.selectedYear = new moment(statistique.endDate);
+    else
+      statistique.selectedYear = selectedYear.add(1, 'year');
+  } else if (action == this.enum.year.PREV) {
+    if (selectedYear.year() -1 < statistique.startDate.year())
+      statistique.selectedYear = new moment(statistique.startDate)
+    else
+      statistique.selectedYear = selectedYear.add(-1, 'year');
+  }
+  console.info("set year to",selectedYear.year());
+  statistique.year = selectedYear.year();
+
+  statistique.messagePerUserTimelineMonth = null;
+  statistique.messagePerUserTimeline = null;
+  $("#year-label").html("Stat for " + new moment(selectedYear).format("YYYY"));
+
+  if(statistique.selectedYear.year() <= statistique.startDate.year())
+    $(".previous-year").html("");
+  else
+    $(".previous-year").html(selectedYear.add(-1, 'year').year() + " ");
+
+  if(statistique.selectedYear.year() >= statistique.endDate.year())
+    $(".next-year").html("");
+  else
+    $(".next-year").html(" " + selectedYear.add(1, 'year').year());
 
 
+  statistique.getMessagePerUserTimeline();
+  statistique.getMessagePerUserTimelineMonth();
+};
 
+
+LayoutController.prototype.setMonthButton = function(month){
+  $("#month-select").children("button").each(function(){
+      $(this).removeClass("btn-info");
+      $(this).addClass("btn-default");
+    });
+  var button = $("#month-select > button:nth-child("+month+")");
+  button.addClass("btn-info");
+  button.removeClass("btn-default");
+};
 
 
 Aop.around("", function (f) {

@@ -231,14 +231,15 @@ HighchartsService.prototype.drawMessageBarChartTimelineMonth = function (statist
         });
     });
 
-    var day = ["M", "T", "W", "T","F", "S", "S"];
     for (var i = 1; i <= 31; i++) {
         categories.push(i)
     }
 
+    if(statistique.month) LayoutController.prototype.setMonthButton(statistique.month);
+
     $('#user-bar-chart-timeline-month').highcharts({
         title: {
-            text: 'Message count per user per day on ' + statistique.year,
+            text: 'Message count per user per day during ' + new moment({month:statistique.month - 1}).format("MMMM") + " " +statistique.year,
             x: -20 //center
         },
         xAxis: {
@@ -283,23 +284,24 @@ HighchartsService.prototype.drawHighcharts = function (statistique) {
 }
 
 
-HighchartsService.prototype.initDrawHighcharts = function () {
+HighchartsService.prototype.initDrawHighcharts = function (conversation) {
 
         if(conversationNameStored == null) {
             alert("You must first upload or load a conversation");
             return;
         }
 
-        //TODO add dates
         statistique = new StatistiqueService({
             conversationName: conversationNameStored,
             setAll: true
         });
 
+        if(conversation){
+          statistique.startDate = new moment(conversation.startDate);
+          statistique.endDate = new moment(conversation.endDate);
+        }
         return statistique;
-
-
-}
+};
 
 // must be after adding methods to prototype
 Aop.around("", function (f) {

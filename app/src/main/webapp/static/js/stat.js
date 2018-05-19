@@ -291,17 +291,21 @@ function _StatistiqueService(options) {
         return;
     };
 
-    this.getMessagePerUserTimelineMonth = function (callback) {
+    this.getMessagePerUserTimelineMonth = function (options) {
         if (this.messagePerUserTimelineMonth != null) return this.messagePerUserTimelineMonth;
 
 
         var month = 1;
-        if (typeof callback === "object")
-            if (typeof callback.month !== "undefined")
-                month = callback.month;
+        if (options && options.month)
+                month = options.month;
+        else
+          if(this.year && this.startDate)
+            if(this.year === this.startDate.year())
+              month = this.startDate.month() + 1;
 
+      console.info("start month is",month);
 
-        var self = this;
+      var self = this;
         $.ajax({
             url: '/api/stats/postCountPerDayPerUser?year='+this.year+'&month='+month,
             type: 'GET',
@@ -324,7 +328,6 @@ function _StatistiqueService(options) {
                  }
                  */
                 if(_.isEmpty(data)){
-                    //TODO afficher un feedback
                     log.info("month "+month+" doesn't have any record");
                 }
                 _.each(data, function (dayCount, author) {
@@ -337,7 +340,9 @@ function _StatistiqueService(options) {
                 });
 
                 self.messagePerUserTimelineMonth = occurences;
-                highchartsService.drawMessageBarChartTimelineMonth(statistique);
+              console.info("start month is",month);
+              statistique.month = month;
+              highchartsService.drawMessageBarChartTimelineMonth(statistique);
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
