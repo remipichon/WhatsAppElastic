@@ -136,15 +136,33 @@ public class ConversationRestController {
         }
         logger.info("conversationName " + conversationName);
 
+        //TODO there, sometime I got a
+        /**
+         demo_wae_spring_app.1.idzswp5rb52i@vps545030    | 2018-05-19 22:57:57.752 ERROR 32 --- [p-nio-80-exec-4] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed;
+         nested exception is org.elasticsearch.client.transport.NoNodeAvailableException:
+         None of the configured nodes were available:
+         [[Fin Fang Foom][W2Dirg1lQ_uNcPXk0OSOPQ][5721b3834a71][inet[elasticsearch/10.0.4.5:9300]]]] with root cause
+         demo_wae_spring_app.1.idzswp5rb52i@vps545030    |
+         demo_wae_spring_app.1.idzswp5rb52i@vps545030    | org.elasticsearch.transport.NodeDisconnectedException: [Fin Fang Foom][inet[elasticsearch/10.0.4.5:9300]][search] disconnected
+         demo_wae_spring_app.1.idzswp5rb52i@vps545030    |
+         */
         //use unique conversation name
-        Conversation conversation = conversationService.create(conversationName);
+        Conversation conversation;
+        try {
+            conversation = conversationService.create(conversationName);
+        } catch (org.elasticsearch.transport.NodeDisconnectedException nodeDisconnected){
+            conversation = null;
+        }
 
         //send mail with link to sender
         if(publicAccess != null && publicAccess != "") {
             logger.info("send an email to " + fromMail);
             String responseSubject = "No subject", body = "No body";
             if (conversation == null) {
-                body = "Conversation name '" + conversation.getName() + "' is not available";
+                body = "Hello "+fromName+",\n\n\nWe received your chat but there was an issue with our system. Would mind trying a bit later ?" +
+                        "\n\nBien à vous, \nA piece of code nicely written by a cool guy" +
+                        "\n\n\n\nIf you want to know more, the middle encountered a nasty 'NodeDisconnectedException' because the backend IP changed. It will" +
+                        "recover by itself within minutes. Try again in 10 minutes or so.";
             } else {
                 String link = publicAccess + "#" + conversation.getName();
                 body = "Hello "+fromName+",\n\n\nWe received your chat and we are now reading it (well, not the content, only dates and senders's name, we are not some freaks spying on you...).\n\n" +
@@ -159,6 +177,10 @@ public class ConversationRestController {
             emailService.sendSimpleMessage(fromMail, responseSubject, body);
         } else {
             logger.warn("PUBLIC_ACCESS env is not defined, no mail has been sent to the sender");
+        }
+
+        if(conversation == null){
+            return new ResponseEntity<String>("Most like there was a NodeDisconnectedException",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         //read conversation async and parse it to ES async
