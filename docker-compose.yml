@@ -28,6 +28,7 @@ services:
     environment:
      - PUBLIC_ACCESS=http://whatstat.remip.eu
      - VIRTUAL_HOST=whatstat.remip.eu #for nginx-proxy
+     - mail.password=none
     volumes:
      - '~/.gradle/:/root/.gradle'
      - './app/:/project/'
