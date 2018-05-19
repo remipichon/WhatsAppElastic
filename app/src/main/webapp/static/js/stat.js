@@ -177,23 +177,6 @@ function _StatistiqueService(options) {
                 self.statContentMessagePerUser = self.sortObject(self.statContentMessagePerUser);
                 self.statNumberMessagePerUser = self.sortObject(self.statNumberMessagePerUser);
 
-
-                statistique.colors.statContentMessagePerUser = [];
-                statistique.colors.statNumberMessagePerUser = [];
-
-                //TODO 'sort' statContentMessagePerUser by enumName
-                //TODO 'sort' statNumberMessagePerUser by enumName
-
-                var colors =  ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
-                    '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
-
-                var nameColorSorted = [];
-                for(var i = 0; i++; i < self.enumName.length){
-                    var name = self.enumName[i];
-                    nameColorSorted.push({name: name, color: colors[i % colors.length]})
-                }
-
-
                 highchartsService.drawMessageUserPieChart(statistique);
                 highchartsService.drawContentUserPieChart(statistique);
             },

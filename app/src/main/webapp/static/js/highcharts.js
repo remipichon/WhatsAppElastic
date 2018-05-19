@@ -107,7 +107,6 @@ HighchartsService.prototype.drawContentUserPieChart = function (statistique) {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
                 },
-                colors: statistique.colors.statContentMessagePerUser
             }
         },
         series: [{
@@ -153,7 +152,6 @@ HighchartsService.prototype.drawMessageUserPieChart = function (statistique) {
 
                     }
                 },
-                colors: statistique.colors.statNumberMessagePerUser
             }
         },
         series: [{
@@ -268,7 +266,7 @@ HighchartsService.prototype.drawMessageBarChartTimelineMonth = function (statist
         },
         series: series
     });
-}
+};
 
 
 HighchartsService.prototype.drawHighcharts = function (statistique) {
