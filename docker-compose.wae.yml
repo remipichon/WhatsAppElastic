@@ -27,7 +27,7 @@ services:
     environment:
      - PUBLIC_ACCESS=${public_access:-http://whatstat.remip.eu} #e-mail related, see code
      - VIRTUAL_HOST=${virtual_host:-whatstat.remip.eu} #for voc nginx-proxy
-     - mail.password=${mail_password}
+     - mail_password=${mail_password}
 
 networks:
   voc_mail:
