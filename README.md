@@ -1,6 +1,10 @@
 
-# Kesako
-Produce stats from a WhatsApp chat. 
+# What is it ?
+Whatsapp allow you to export any chats, WhatStat allow you to draw statistics from it. 
+
+See a live [demo](http://whatstat.remip.eu/#frozen)
+
+Or use it lvie with [my self hosted instance](http://whatstat.remip.eu). 
 
 
 # Install
